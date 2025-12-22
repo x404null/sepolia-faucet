@@ -1,11 +1,115 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-  <meta charset="utf-8">
-  <title>Cloudflare Test</title>
+  <meta charset="UTF-8">
+  <title>Sepolia ETH Faucet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .box {
+      background: #020617;
+      padding: 20px;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,.5);
+    }
+    h1 {
+      text-align: center;
+      color: #38bdf8;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      background: #38bdf8;
+      color: #020617;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: #334155;
+      cursor: not-allowed;
+    }
+    #msg {
+      margin-top: 15px;
+      word-break: break-all;
+      font-size: 14px;
+    }
+  </style>
 </head>
+
 <body>
-  <h1>Cloudflare Pages OK</h1>
-  <p>Nếu thấy dòng này là frontend đã chạy</p>
+  <div class="box">
+    <h1>🚰 Sepolia ETH Faucet</h1>
+
+    <input id="address" placeholder="Dán địa chỉ ví Sepolia (0x...)" />
+
+    <button id="btn" onclick="claim()">CLAIM ETH</button>
+
+    <div id="msg"></div>
+  </div>
+
+<script>
+async function claim() {
+  const addr = document.getElementById("address").value.trim();
+  const msg = document.getElementById("msg");
+  const btn = document.getElementById("btn");
+
+  msg.innerText = "";
+  btn.disabled = true;
+
+  if (!addr.startsWith("0x") || addr.length !== 42) {
+    msg.innerText = "❌ Địa chỉ ví không hợp lệ";
+    btn.disabled = false;
+    return;
+  }
+
+  msg.innerText = "⏳ Đang gửi ETH, vui lòng chờ...";
+
+  try {
+    const res = await fetch("URL_WORKER_CỦA_BẠN", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ address: addr })
+    });
+
+    const data = await res.json();
+
+    if (data.tx) {
+      msg.innerHTML = `
+        ✅ Gửi thành công!<br>
+        TX:<br>${data.tx}
+      `;
+    } else {
+      msg.innerText = "❌ Lỗi: " + (data.error || "Không xác định");
+    }
+
+  } catch (e) {
+    msg.innerText = "❌ Không kết nối được backend";
+  }
+
+  btn.disabled = false;
+}
+</script>
 </body>
 </html>
