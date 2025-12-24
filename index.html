@@ -1,35 +1,203 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Sepolia Faucet</title>
+<meta charset="UTF-8">
+<title>Hold To Win</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+  body {
+    margin: 0;
+    background: radial-gradient(circle at top, #101a33, #0b1220);
+    color: #fff;
+    font-family: system-ui, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+
+  .game {
+    width: 360px;
+    background: #141c2f;
+    padding: 28px 20px 24px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 25px 60px rgba(0,0,0,.55);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 26px;
+  }
+
+  .mascot {
+    font-size: 48px;
+    margin: 12px 0;
+    transition: transform .15s;
+  }
+
+  .bar {
+    height: 28px;
+    background: #0e1628;
+    border-radius: 14px;
+    overflow: hidden;
+    margin: 24px 0 10px;
+  }
+
+  .fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #4da3ff, #33d6c9);
+    transition: width .05s;
+  }
+
+  .percent {
+    font-size: 18px;
+    color: #9aa4c7;
+  }
+
+  .btn {
+    margin-top: 18px;
+    width: 100%;
+    padding: 18px;
+    font-size: 22px;
+    font-weight: bold;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #4da3ff, #33d6c9);
+    color: #000;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .btn:active {
+    transform: scale(0.96);
+  }
+
+  .result {
+    margin-top: 18px;
+    font-size: 20px;
+    min-height: 28px;
+  }
+
+  .best {
+    margin-top: 6px;
+    font-size: 14px;
+    color: #9aa4c7;
+  }
+
+  .ad {
+    margin-top: 18px;
+    padding: 10px;
+    background: #1f2a4f;
+    border-radius: 12px;
+    font-size: 13px;
+    color: #6cff8d;
+  }
+</style>
 </head>
+
 <body>
-  <h2>ETH Sepolia Faucet (TEST)</h2>
 
-  <input id="addr" placeholder="0x..." style="width:320px">
-  <br><br>
-  <button onclick="send()">Send ETH</button>
+<div class="game">
+  <h1>✊ Hold To Win</h1>
 
-  <pre id="out"></pre>
+  <div class="mascot" id="mascot">😐</div>
 
-  <script>
-    async function send() {
-      const address = document.getElementById("addr").value
+  <div class="bar">
+    <div class="fill" id="fill"></div>
+  </div>
 
-      const res = await fetch(
-        "https://TEN-WORKER.workers.dev",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ address })
-        }
-      )
+  <div class="percent" id="percent">0%</div>
 
-      const data = await res.json()
-      document.getElementById("out").textContent =
-        JSON.stringify(data, null, 2)
+  <div class="btn" id="btn">HOLD</div>
+
+  <div class="result" id="result">Hold & release near 100%</div>
+  <div class="best" id="best">Best: 0</div>
+
+  <!-- AD SLOT -->
+  <div class="ad">Ad • Your banner here</div>
+</div>
+
+<script>
+let holding = false;
+let value = 0;
+let timer;
+
+let bestScore = Number(localStorage.getItem("bestHold")) || 0;
+
+const btn = document.getElementById("btn");
+const fill = document.getElementById("fill");
+const result = document.getElementById("result");
+const percent = document.getElementById("percent");
+const mascot = document.getElementById("mascot");
+const best = document.getElementById("best");
+
+best.innerText = "Best: " + bestScore;
+
+function startHold() {
+  if (holding) return;
+  holding = true;
+  value = 0;
+
+  fill.style.width = "0%";
+  percent.innerText = "0%";
+  result.innerText = "";
+  mascot.innerText = "😐";
+
+  timer = setInterval(() => {
+    value += Math.random() * 4 + 1;
+    fill.style.width = value + "%";
+    percent.innerText = Math.floor(value) + "%";
+
+    if (value > 70) mascot.innerText = "😬";
+    if (value > 85) mascot.innerText = "🔥";
+    if (value > 95) mascot.innerText = "😈";
+
+    if (value >= 100) {
+      endGame(true);
     }
-  </script>
+  }, 50);
+}
+
+function endHold() {
+  if (!holding) return;
+  endGame(false);
+}
+
+function endGame(over) {
+  clearInterval(timer);
+  holding = false;
+
+  if (over) {
+    mascot.innerText = "💥";
+    result.innerText = "💥 Too far! FAIL";
+  } else {
+    const score = Math.max(0, Math.round(100 - Math.abs(100 - value)));
+    mascot.innerText = score > 90 ? "🏆" : "🎯";
+    result.innerText = `Score: ${score}`;
+
+    if (score > bestScore) {
+      bestScore = score;
+      localStorage.setItem("bestHold", bestScore);
+      best.innerText = "Best: " + bestScore;
+    }
+  }
+}
+
+// Mouse
+btn.addEventListener("mousedown", startHold);
+btn.addEventListener("mouseup", endHold);
+btn.addEventListener("mouseleave", endHold);
+
+// Touch (mobile)
+btn.addEventListener("touchstart", e => {
+  e.preventDefault();
+  startHold();
+});
+btn.addEventListener("touchend", endHold);
+</script>
+
 </body>
 </html>
