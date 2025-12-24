@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Hold To Win</title>
+<title>Tap The Dot</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -19,76 +19,61 @@
 
   .game {
     width: 360px;
+    height: 520px;
     background: #141c2f;
-    padding: 28px 20px 24px;
     border-radius: 20px;
-    text-align: center;
+    position: relative;
+    overflow: hidden;
     box-shadow: 0 25px 60px rgba(0,0,0,.55);
+    text-align: center;
   }
 
   h1 {
-    margin: 0;
-    font-size: 26px;
+    margin: 16px 0 8px;
   }
 
-  .mascot {
-    font-size: 48px;
-    margin: 12px 0;
-    transition: transform .15s;
-  }
-
-  .bar {
-    height: 28px;
-    background: #0e1628;
-    border-radius: 14px;
-    overflow: hidden;
-    margin: 24px 0 10px;
-  }
-
-  .fill {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #4da3ff, #33d6c9);
-    transition: width .05s;
-  }
-
-  .percent {
+  .top {
+    display: flex;
+    justify-content: space-around;
     font-size: 18px;
-    color: #9aa4c7;
+  }
+
+  .dot {
+    width: 50px;
+    height: 50px;
+    background: radial-gradient(circle, #4da3ff, #33d6c9);
+    border-radius: 50%;
+    position: absolute;
+    display: none;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(77,163,255,.8);
   }
 
   .btn {
-    margin-top: 18px;
-    width: 100%;
-    padding: 18px;
-    font-size: 22px;
+    margin: 12px auto;
+    padding: 14px 22px;
+    font-size: 18px;
     font-weight: bold;
     border: none;
-    border-radius: 16px;
+    border-radius: 14px;
     background: linear-gradient(135deg, #4da3ff, #33d6c9);
     color: #000;
     cursor: pointer;
-    user-select: none;
-  }
-
-  .btn:active {
-    transform: scale(0.96);
   }
 
   .result {
-    margin-top: 18px;
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,.75);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
     font-size: 20px;
-    min-height: 28px;
-  }
-
-  .best {
-    margin-top: 6px;
-    font-size: 14px;
-    color: #9aa4c7;
   }
 
   .ad {
-    margin-top: 18px;
+    margin-top: 16px;
     padding: 10px;
     background: #1f2a4f;
     border-radius: 12px;
@@ -100,103 +85,84 @@
 
 <body>
 
-<div class="game">
-  <h1>✊ Hold To Win</h1>
+<div class="game" id="game">
+  <h1>🔴 Tap The Dot</h1>
 
-  <div class="mascot" id="mascot">😐</div>
-
-  <div class="bar">
-    <div class="fill" id="fill"></div>
+  <div class="top">
+    <div>⏱️ <span id="time">30</span>s</div>
+    <div>🔥 <span id="score">0</span></div>
   </div>
 
-  <div class="percent" id="percent">0%</div>
+  <button class="btn" onclick="startGame()">START</button>
 
-  <div class="btn" id="btn">HOLD</div>
+  <div class="dot" id="dot"></div>
 
-  <div class="result" id="result">Hold & release near 100%</div>
-  <div class="best" id="best">Best: 0</div>
-
-  <!-- AD SLOT -->
-  <div class="ad">Ad • Your banner here</div>
+  <div class="result" id="result">
+    <div>🎯 Score: <span id="final"></span></div>
+    <button class="btn" onclick="restart()">Play Again</button>
+    <div class="ad">Ad • Your banner here</div>
+  </div>
 </div>
 
 <script>
-let holding = false;
-let value = 0;
-let timer;
-
-let bestScore = Number(localStorage.getItem("bestHold")) || 0;
-
-const btn = document.getElementById("btn");
-const fill = document.getElementById("fill");
+const game = document.getElementById("game");
+const dot = document.getElementById("dot");
+const scoreEl = document.getElementById("score");
+const timeEl = document.getElementById("time");
 const result = document.getElementById("result");
-const percent = document.getElementById("percent");
-const mascot = document.getElementById("mascot");
-const best = document.getElementById("best");
+const final = document.getElementById("final");
 
-best.innerText = "Best: " + bestScore;
+let score = 0;
+let time = 30;
+let timer;
+let playing = false;
 
-function startHold() {
-  if (holding) return;
-  holding = true;
-  value = 0;
+function randomPos() {
+  const rect = game.getBoundingClientRect();
+  const x = Math.random() * (rect.width - 60);
+  const y = 80 + Math.random() * (rect.height - 160);
+  dot.style.left = x + "px";
+  dot.style.top = y + "px";
+}
 
-  fill.style.width = "0%";
-  percent.innerText = "0%";
-  result.innerText = "";
-  mascot.innerText = "😐";
+function startGame() {
+  if (playing) return;
+  playing = true;
+  score = 0;
+  time = 30;
+  scoreEl.innerText = score;
+  timeEl.innerText = time;
+  result.style.display = "none";
+
+  randomPos();
+  dot.style.display = "block";
 
   timer = setInterval(() => {
-    value += Math.random() * 4 + 1;
-    fill.style.width = value + "%";
-    percent.innerText = Math.floor(value) + "%";
-
-    if (value > 70) mascot.innerText = "😬";
-    if (value > 85) mascot.innerText = "🔥";
-    if (value > 95) mascot.innerText = "😈";
-
-    if (value >= 100) {
-      endGame(true);
-    }
-  }, 50);
+    time--;
+    timeEl.innerText = time;
+    if (time <= 0) endGame();
+  }, 1000);
 }
 
-function endHold() {
-  if (!holding) return;
-  endGame(false);
-}
-
-function endGame(over) {
-  clearInterval(timer);
-  holding = false;
-
-  if (over) {
-    mascot.innerText = "💥";
-    result.innerText = "💥 Too far! FAIL";
-  } else {
-    const score = Math.max(0, Math.round(100 - Math.abs(100 - value)));
-    mascot.innerText = score > 90 ? "🏆" : "🎯";
-    result.innerText = `Score: ${score}`;
-
-    if (score > bestScore) {
-      bestScore = score;
-      localStorage.setItem("bestHold", bestScore);
-      best.innerText = "Best: " + bestScore;
-    }
-  }
-}
-
-// Mouse
-btn.addEventListener("mousedown", startHold);
-btn.addEventListener("mouseup", endHold);
-btn.addEventListener("mouseleave", endHold);
-
-// Touch (mobile)
-btn.addEventListener("touchstart", e => {
-  e.preventDefault();
-  startHold();
+dot.addEventListener("click", () => {
+  if (!playing) return;
+  score++;
+  scoreEl.innerText = score;
+  randomPos();
 });
-btn.addEventListener("touchend", endHold);
+
+function endGame() {
+  playing = false;
+  clearInterval(timer);
+  dot.style.display = "none";
+  final.innerText = score;
+  result.style.display = "flex";
+}
+
+function restart() {
+  result.style.display = "none";
+  startGame();
+}
 </script>
 
 </body>
