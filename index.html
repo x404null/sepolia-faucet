@@ -2,105 +2,100 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Sudoku Game</title>
+<title>Pixel Minesweeper</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
   body {
     margin: 0;
-    background: radial-gradient(circle at top, #101a33, #0b1220);
-    color: #fff;
-    font-family: system-ui, sans-serif;
+    background: #7b7b7b;
+    font-family: "Courier New", monospace;
     display: flex;
     justify-content: center;
-    min-height: 100vh;
+    align-items: center;
+    height: 100vh;
   }
 
   .game {
-    margin-top: 20px;
-    background: #141c2f;
-    padding: 20px;
-    border-radius: 20px;
-    width: 360px;
-    box-shadow: 0 20px 60px rgba(0,0,0,.6);
+    background: #c0c0c0;
+    padding: 10px;
+    border: 4px solid #fff;
+    box-shadow:
+      inset -4px -4px #808080,
+      inset 4px 4px #fff;
   }
 
   h1 {
     text-align: center;
-    margin: 0 0 10px;
+    font-size: 16px;
+    margin: 4px 0 6px;
   }
 
-  .controls {
+  .top {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
+    background: #bdbdbd;
+    padding: 4px;
+    border: 2px solid #808080;
+    margin-bottom: 6px;
   }
 
   select, button {
-    border: none;
-    border-radius: 10px;
-    padding: 8px 10px;
-    font-weight: bold;
+    font-family: inherit;
+    font-size: 12px;
+    padding: 2px 6px;
+    background: #c0c0c0;
+    border: 2px solid #fff;
+    box-shadow:
+      inset -2px -2px #808080,
+      inset 2px 2px #fff;
     cursor: pointer;
   }
 
-  button {
-    background: linear-gradient(135deg,#4da3ff,#33d6c9);
-    color: #000;
-  }
-
-  select {
-    background: #0e1628;
-    color: #fff;
+  button:active {
+    box-shadow:
+      inset 2px 2px #808080,
+      inset -2px -2px #fff;
   }
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(9, 1fr);
-    gap: 2px;
-    background: #000;
+    gap: 0;
+    background: #808080;
     padding: 2px;
   }
 
   .cell {
-    width: 36px;
-    height: 36px;
-    background: #0e1628;
-    text-align: center;
-    font-size: 18px;
-    line-height: 36px;
+    width: 26px;
+    height: 26px;
+    background: #c0c0c0;
+    border: 2px solid #fff;
+    box-shadow:
+      inset -2px -2px #808080,
+      inset 2px 2px #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
     cursor: pointer;
-    border-radius: 4px;
+    user-select: none;
   }
 
-  .cell input {
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    border: none;
-    text-align: center;
-    font-size: 18px;
-    color: #fff;
+  .cell.open {
+    background: #bdbdbd;
+    border: 1px solid #808080;
+    box-shadow: none;
+    cursor: default;
   }
 
-  .fixed {
-    background: #1f2a4f;
-    font-weight: bold;
-  }
-
-  .error {
-    background: #8b1e1e !important;
-  }
-
-  .success {
-    background: #1e8b4f !important;
+  .cell.mine {
+    background: #ff4d4d;
   }
 
   .info {
-    margin-top: 10px;
     text-align: center;
-    font-size: 14px;
-    color: #9aa4c7;
+    font-size: 12px;
+    margin-top: 6px;
   }
 </style>
 </head>
@@ -108,153 +103,165 @@
 <body>
 
 <div class="game">
-  <h1>🧩 Sudoku</h1>
+  <h1>💣 PIXEL MINESWEEPER</h1>
 
-  <div class="controls">
-    <select id="difficulty">
+  <div class="top">
+    <select id="level">
       <option value="easy">Easy</option>
       <option value="medium">Medium</option>
       <option value="hard">Hard</option>
-      <option value="expert">Expert</option>
     </select>
-    <button onclick="newGame()">New Game</button>
+    <button onclick="newGame()">New</button>
   </div>
 
   <div class="grid" id="grid"></div>
-
-  <div class="info" id="info">Fill all cells correctly</div>
+  <div class="info" id="info">Click to start</div>
 </div>
 
 <script>
+/* ===== SOUND (8-BIT STYLE) ===== */
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function beep(freq, time) {
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.frequency.value = freq;
+  osc.type = "square";
+  gain encourage
+  gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+  osc.start();
+  osc.stop(audioCtx.currentTime + time);
+}
+
+const sound = {
+  click: () => beep(600, 0.05),
+  open: () => beep(800, 0.08),
+  boom: () => beep(120, 0.3),
+  win: () => beep(1000, 0.2)
+};
+
+/* ===== GAME LOGIC ===== */
 const gridEl = document.getElementById("grid");
 const infoEl = document.getElementById("info");
 
-let solution = [];
-let puzzle = [];
-
-const difficultyMap = {
-  easy: 35,
-  medium: 45,
-  hard: 55,
-  expert: 60
+const levels = {
+  easy: { size: 8, mines: 10 },
+  medium: { size: 10, mines: 20 },
+  hard: { size: 12, mines: 35 }
 };
 
-// ===== SUDOKU GENERATOR =====
-function generateBoard() {
-  const board = Array.from({ length: 9 }, () => Array(9).fill(0));
-  fillBoard(board);
-  return board;
+let size, mineCount, board, revealed, gameOver;
+
+function newGame() {
+  const lvl = levels[document.getElementById("level").value];
+  size = lvl.size;
+  mineCount = lvl.mines;
+  revealed = 0;
+  gameOver = false;
+  infoEl.innerText = "Good luck 😈";
+
+  gridEl.style.gridTemplateColumns = `repeat(${size}, 26px)`;
+  board = Array.from({ length: size * size }, () => ({
+    mine: false,
+    open: false,
+    count: 0
+  }));
+
+  placeMines();
+  countMines();
+  render();
 }
 
-function fillBoard(board) {
-  for (let row = 0; row < 9; row++) {
-    for (let col = 0; col < 9; col++) {
-      if (board[row][col] === 0) {
-        const numbers = shuffle([1,2,3,4,5,6,7,8,9]);
-        for (let num of numbers) {
-          if (isValid(board, row, col, num)) {
-            board[row][col] = num;
-            if (fillBoard(board)) return true;
-            board[row][col] = 0;
-          }
-        }
-        return false;
+function placeMines() {
+  let placed = 0;
+  while (placed < mineCount) {
+    const i = Math.floor(Math.random() * board.length);
+    if (!board[i].mine) {
+      board[i].mine = true;
+      placed++;
+    }
+  }
+}
+
+function countMines() {
+  for (let i = 0; i < board.length; i++) {
+    if (board[i].mine) continue;
+    board[i].count = neighbors(i).filter(n => board[n].mine).length;
+  }
+}
+
+function neighbors(i) {
+  const x = i % size;
+  const y = Math.floor(i / size);
+  const list = [];
+  for (let dy = -1; dy <= 1; dy++) {
+    for (let dx = -1; dx <= 1; dx++) {
+      if (dx === 0 && dy === 0) continue;
+      const nx = x + dx, ny = y + dy;
+      if (nx >= 0 && nx < size && ny >= 0 && ny < size) {
+        list.push(ny * size + nx);
       }
     }
   }
-  return true;
+  return list;
 }
 
-function isValid(board, row, col, num) {
-  for (let i = 0; i < 9; i++) {
-    if (board[row][i] === num || board[i][col] === num) return false;
-  }
-
-  const boxRow = Math.floor(row / 3) * 3;
-  const boxCol = Math.floor(col / 3) * 3;
-  for (let r = boxRow; r < boxRow + 3; r++) {
-    for (let c = boxCol; c < boxCol + 3; c++) {
-      if (board[r][c] === num) return false;
-    }
-  }
-  return true;
-}
-
-function shuffle(arr) {
-  return arr.sort(() => Math.random() - 0.5);
-}
-
-// ===== CREATE PUZZLE =====
-function createPuzzle(board, emptyCount) {
-  const puzzle = board.map(r => r.slice());
-  let removed = 0;
-
-  while (removed < emptyCount) {
-    const r = Math.floor(Math.random() * 9);
-    const c = Math.floor(Math.random() * 9);
-    if (puzzle[r][c] !== 0) {
-      puzzle[r][c] = 0;
-      removed++;
-    }
-  }
-  return puzzle;
-}
-
-// ===== RENDER =====
 function render() {
   gridEl.innerHTML = "";
-  puzzle.forEach((row, r) => {
-    row.forEach((val, c) => {
-      const cell = document.createElement("div");
-      cell.className = "cell";
-
-      if (val !== 0) {
-        cell.innerText = val;
-        cell.classList.add("fixed");
-      } else {
-        const input = document.createElement("input");
-        input.maxLength = 1;
-        input.oninput = () => checkInput(input, r, c);
-        cell.appendChild(input);
+  board.forEach((cell, i) => {
+    const d = document.createElement("div");
+    d.className = "cell";
+    if (cell.open) {
+      d.classList.add("open");
+      if (cell.mine) {
+        d.classList.add("mine");
+        d.innerText = "💣";
+      } else if (cell.count > 0) {
+        d.innerText = cell.count;
       }
-      gridEl.appendChild(cell);
-    });
+    }
+    d.onclick = () => clickCell(i);
+    gridEl.appendChild(d);
   });
 }
 
-function checkInput(input, r, c) {
-  const val = Number(input.value);
-  if (!val || val < 1 || val > 9) {
-    input.value = "";
+function clickCell(i) {
+  if (gameOver || board[i].open) return;
+  sound.click();
+
+  board[i].open = true;
+
+  if (board[i].mine) {
+    sound.boom();
+    revealAll();
+    infoEl.innerText = "💥 BOOM!";
+    gameOver = true;
+    render();
     return;
   }
 
-  if (val !== solution[r][c]) {
-    input.parentElement.classList.add("error");
-  } else {
-    input.parentElement.classList.remove("error");
-    input.parentElement.classList.add("success");
-    puzzle[r][c] = val;
-    checkWin();
-  }
-}
+  revealed++;
+  sound.open();
 
-function checkWin() {
-  for (let r = 0; r < 9; r++) {
-    for (let c = 0; c < 9; c++) {
-      if (puzzle[r][c] !== solution[r][c]) return;
-    }
+  if (board[i].count === 0) {
+    neighbors(i).forEach(n => {
+      if (!board[n].open) clickCell(n);
+    });
   }
-  infoEl.innerText = "🎉 Completed!";
-}
 
-// ===== NEW GAME =====
-function newGame() {
-  infoEl.innerText = "Fill all cells correctly";
-  solution = generateBoard();
-  const diff = document.getElementById("difficulty").value;
-  puzzle = createPuzzle(solution, difficultyMap[diff]);
+  if (revealed === size * size - mineCount) {
+    sound.win();
+    infoEl.innerText = "🎉 YOU WIN!";
+    gameOver = true;
+  }
+
   render();
+}
+
+function revealAll() {
+  board.forEach(c => c.open = true);
 }
 
 newGame();
