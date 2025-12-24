@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Tap The Dot</title>
+<title>Mini Games Hub</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -11,65 +12,63 @@
     background: radial-gradient(circle at top, #101a33, #0b1220);
     color: #fff;
     font-family: system-ui, sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
+    min-height: 100vh;
   }
 
-  .game {
-    width: 360px;
-    height: 520px;
-    background: #141c2f;
-    border-radius: 20px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 25px 60px rgba(0,0,0,.55);
-    text-align: center;
+  .container {
+    max-width: 420px;
+    margin: auto;
+    padding: 20px;
   }
 
   h1 {
-    margin: 16px 0 8px;
+    text-align: center;
+    margin-bottom: 16px;
   }
 
-  .top {
-    display: flex;
-    justify-content: space-around;
-    font-size: 18px;
+  /* ===== HUB ===== */
+  .hub {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
   }
 
-  .dot {
-    width: 50px;
-    height: 50px;
-    background: radial-gradient(circle, #4da3ff, #33d6c9);
-    border-radius: 50%;
-    position: absolute;
-    display: none;
+  .card {
+    background: #141c2f;
+    border-radius: 16px;
+    padding: 18px;
+    text-align: center;
     cursor: pointer;
-    box-shadow: 0 0 20px rgba(77,163,255,.8);
+    box-shadow: 0 10px 30px rgba(0,0,0,.4);
+    transition: transform .1s;
   }
 
-  .btn {
-    margin: 12px auto;
-    padding: 14px 22px;
-    font-size: 18px;
+  .card:active {
+    transform: scale(0.97);
+  }
+
+  .icon {
+    font-size: 36px;
+    margin-bottom: 6px;
+  }
+
+  .name {
     font-weight: bold;
-    border: none;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #4da3ff, #33d6c9);
-    color: #000;
-    cursor: pointer;
   }
 
-  .result {
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,.75);
+  /* ===== GAME SCREEN ===== */
+  .game {
     display: none;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    font-size: 20px;
+    background: #141c2f;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 20px 50px rgba(0,0,0,.5);
+  }
+
+  .back {
+    margin-bottom: 10px;
+    cursor: pointer;
+    color: #6cff8d;
   }
 
   .ad {
@@ -79,89 +78,177 @@
     border-radius: 12px;
     font-size: 13px;
     color: #6cff8d;
+    text-align: center;
   }
+
+  button {
+    padding: 14px;
+    border-radius: 14px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    background: linear-gradient(135deg, #4da3ff, #33d6c9);
+    color: #000;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .center { text-align: center; }
 </style>
 </head>
 
 <body>
 
-<div class="game" id="game">
-  <h1>🔴 Tap The Dot</h1>
+<div class="container">
 
-  <div class="top">
-    <div>⏱️ <span id="time">30</span>s</div>
-    <div>🔥 <span id="score">0</span></div>
+  <!-- HUB -->
+  <div id="hub">
+    <h1>🎮 Mini Games</h1>
+    <div class="hub">
+      <div class="card" onclick="openGame('hold')">
+        <div class="icon">✊</div>
+        <div class="name">Hold To Win</div>
+      </div>
+
+      <div class="card" onclick="openGame('click')">
+        <div class="icon">🖱️</div>
+        <div class="name">Click Speed</div>
+      </div>
+
+      <div class="card" onclick="openGame('reaction')">
+        <div class="icon">⚡</div>
+        <div class="name">Reaction Time</div>
+      </div>
+
+      <div class="card" onclick="openGame('tap')">
+        <div class="icon">🔴</div>
+        <div class="name">Tap The Dot</div>
+      </div>
+    </div>
+
+    <div class="ad">Ad • Games Hub Banner</div>
   </div>
 
-  <button class="btn" onclick="startGame()">START</button>
-
-  <div class="dot" id="dot"></div>
-
-  <div class="result" id="result">
-    <div>🎯 Score: <span id="final"></span></div>
-    <button class="btn" onclick="restart()">Play Again</button>
-    <div class="ad">Ad • Your banner here</div>
+  <!-- ===== GAME: HOLD TO WIN ===== -->
+  <div class="game" id="hold">
+    <div class="back" onclick="back()">← Back</div>
+    <h2 class="center">✊ Hold To Win</h2>
+    <div class="center" id="holdValue">0%</div>
+    <div style="background:#0e1628;height:26px;border-radius:13px;overflow:hidden">
+      <div id="holdBar" style="height:100%;width:0%;background:#33d6c9"></div>
+    </div>
+    <button id="holdBtn">HOLD</button>
+    <div class="center" id="holdResult"></div>
   </div>
+
+  <!-- ===== GAME: CLICK SPEED ===== -->
+  <div class="game" id="click">
+    <div class="back" onclick="back()">← Back</div>
+    <h2 class="center">🖱️ Click Speed</h2>
+    <div class="center">Time: <span id="clickTime">10</span>s</div>
+    <div class="center">Score: <span id="clickScore">0</span></div>
+    <button onclick="startClick()">START</button>
+  </div>
+
+  <!-- ===== GAME: REACTION ===== -->
+  <div class="game" id="reaction">
+    <div class="back" onclick="back()">← Back</div>
+    <h2 class="center">⚡ Reaction Time</h2>
+    <button onclick="startReaction()">START</button>
+    <div class="center" id="reactionBox" style="margin-top:20px;height:160px;border-radius:12px;background:#b92d2d;line-height:160px">
+      WAIT
+    </div>
+    <div class="center" id="reactionResult"></div>
+  </div>
+
+  <!-- ===== GAME: TAP ===== -->
+  <div class="game" id="tap">
+    <div class="back" onclick="back()">← Back</div>
+    <h2 class="center">🔴 Tap The Dot</h2>
+    <div class="center">Score: <span id="tapScore">0</span></div>
+    <button onclick="startTap()">START</button>
+    <div id="dot" style="display:none;width:40px;height:40px;border-radius:50%;background:red;margin:20px auto"></div>
+  </div>
+
 </div>
 
 <script>
-const game = document.getElementById("game");
-const dot = document.getElementById("dot");
-const scoreEl = document.getElementById("score");
-const timeEl = document.getElementById("time");
-const result = document.getElementById("result");
-const final = document.getElementById("final");
-
-let score = 0;
-let time = 30;
-let timer;
-let playing = false;
-
-function randomPos() {
-  const rect = game.getBoundingClientRect();
-  const x = Math.random() * (rect.width - 60);
-  const y = 80 + Math.random() * (rect.height - 160);
-  dot.style.left = x + "px";
-  dot.style.top = y + "px";
+/* ===== NAV ===== */
+function openGame(id) {
+  document.getElementById("hub").style.display = "none";
+  document.querySelectorAll(".game").forEach(g => g.style.display = "none");
+  document.getElementById(id).style.display = "block";
 }
 
-function startGame() {
-  if (playing) return;
-  playing = true;
-  score = 0;
-  time = 30;
-  scoreEl.innerText = score;
-  timeEl.innerText = time;
-  result.style.display = "none";
+function back() {
+  document.getElementById("hub").style.display = "block";
+  document.querySelectorAll(".game").forEach(g => g.style.display = "none");
+}
 
-  randomPos();
-  dot.style.display = "block";
+/* ===== HOLD ===== */
+let holdTimer, holdVal = 0;
+const holdBtn = document.getElementById("holdBtn");
+holdBtn.onmousedown = holdBtn.ontouchstart = () => {
+  holdVal = 0;
+  holdTimer = setInterval(() => {
+    holdVal += 3;
+    document.getElementById("holdValue").innerText = holdVal + "%";
+    document.getElementById("holdBar").style.width = holdVal + "%";
+    if (holdVal >= 100) stopHold(true);
+  }, 50);
+};
+holdBtn.onmouseup = holdBtn.ontouchend = () => stopHold(false);
 
-  timer = setInterval(() => {
-    time--;
-    timeEl.innerText = time;
-    if (time <= 0) endGame();
+function stopHold(over) {
+  clearInterval(holdTimer);
+  document.getElementById("holdResult").innerText =
+    over ? "💥 FAIL" : "🎯 Score: " + (100 - Math.abs(100 - holdVal));
+}
+
+/* ===== CLICK SPEED ===== */
+let clickScore = 0, clickTime = 10, clickTimer;
+function startClick() {
+  clickScore = 0; clickTime = 10;
+  document.getElementById("clickScore").innerText = clickScore;
+  clickTimer = setInterval(() => {
+    clickTime--;
+    document.getElementById("clickTime").innerText = clickTime;
+    if (clickTime <= 0) clearInterval(clickTimer);
   }, 1000);
+  document.body.onclick = () => clickScore++;
 }
 
-dot.addEventListener("click", () => {
-  if (!playing) return;
-  score++;
-  scoreEl.innerText = score;
-  randomPos();
-});
+/* ===== REACTION ===== */
+let reactStart;
+function startReaction() {
+  const box = document.getElementById("reactionBox");
+  const result = document.getElementById("reactionResult");
+  result.innerText = "";
+  box.style.background = "#b92d2d";
+  box.innerText = "WAIT";
+  setTimeout(() => {
+    box.style.background = "#33d6c9";
+    box.innerText = "CLICK";
+    reactStart = performance.now();
+  }, 2000 + Math.random() * 2000);
 
-function endGame() {
-  playing = false;
-  clearInterval(timer);
-  dot.style.display = "none";
-  final.innerText = score;
-  result.style.display = "flex";
+  box.onclick = () => {
+    if (box.innerText === "CLICK") {
+      result.innerText = Math.round(performance.now() - reactStart) + " ms";
+    }
+  };
 }
 
-function restart() {
-  result.style.display = "none";
-  startGame();
+/* ===== TAP ===== */
+function startTap() {
+  const dot = document.getElementById("dot");
+  let score = 0;
+  document.getElementById("tapScore").innerText = score;
+  dot.style.display = "block";
+  dot.onclick = () => {
+    score++;
+    document.getElementById("tapScore").innerText = score;
+  };
 }
 </script>
 
