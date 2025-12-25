@@ -1,224 +1,125 @@
-
 <!DOCTYPE html>
-<html lang="vi">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Fishing Hard Days 🎣</title>
+<title>Pikachu Mobile - 3 Chế Độ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body{
-  font-family: monospace;
-  background:#1b1b1b;
-  color:#fff;
-  text-align:center;
-}
-#game{
-  background:#222;
-  padding:20px;
-  width:350px;
-  margin:auto;
-  border:3px solid #555;
-  border-radius:8px;
-}
+body{background:#111;font-family:Arial;text-align:center;color:white;margin:0;user-select:none;}
+h2{padding-top:20px;}
+#menu{margin-top:20px;}
 button{
+  padding:12px 20px;margin:10px;font-size:20px;border:none;border-radius:8px;
+  background:#ffb300;color:#000;width:80%;max-width:250px;
+}
+#board{
+  margin:20px auto;display:grid;gap:6px;justify-content:center;
   padding:10px;
-  margin:5px;
-  background:#444;
-  color:white;
-  border:2px solid #666;
-  cursor:pointer;
 }
-button:hover{background:#666;}
-
-#powerContainer{
-  width:300px;
-  height:20px;
-  background:#555;
-  border:2px solid #999;
-  margin:20px auto;
-  display:none;
+.card{
+  background:#333;width:60px;height:60px;display:flex;align-items:center;
+  justify-content:center;border-radius:8px;font-size:32px;cursor:pointer;
+  transition:0.25s;
 }
-#powerBar{
-  width:10px;
-  height:100%;
-  background:#0f0;
+.card.open{background:#fff;color:#000;}
+.card.matched{background:#0f0;color:#000;cursor:default;}
+@media(max-width:600px){
+  .card{width:50px;height:50px;font-size:26px;}
 }
-
-/* SHOP */
-#shop{
-  display:none;
-  background:#111;
-  padding:10px;
-  margin-top:15px;
-  border:2px solid #666;
-}
-#shop button{background:#777;border:1px solid #aaa;}
 </style>
 </head>
-
 <body>
 
-<h1>🎣 Fishing Hard Days - Retro 9x</h1>
-
-<div id="game">
-  <div id="stats">
-    Hồ: <span id="level">1</span> / 10<br>
-    Lượt câu: <span id="turns">3</span><br>
-    Tiền: <span id="coins">0</span>
-  </div>
-
-  <button id="btnCast" onclick="startCast()">🎣 Bắt đầu câu</button>
-  <button onclick="openShop()">🛒 Shop</button>
-
-  <div id="powerContainer">
-    <div id="powerBar"></div>
-  </div>
-
-  <p id="result"></p>
-  <button id="nextLevel" onclick="nextLevel()" style="display:none">📍 Sang hồ tiếp theo</button>
-
-  <!-- 🛍 SHOP -->
-  <div id="shop">
-    <h3>🛠️ SHOP NÂNG CẤP</h3>
-    <p>Cấp cần câu: <span id="rodLevel">1</span></p>
-    <p>Tăng tỉ lệ thành công: +<span id="rodBonus">0</span>%</p>
-    <p>Giá nâng cấp: <span id="upgradeCost">50</span>💰</p>
-    <button onclick="upgradeRod()">⚙️ Nâng cấp cần câu</button><br><br>
-    <button onclick="closeShop()">❌ Đóng</button>
-  </div>
-
+<h2>🧩 Pikachu Lật Hình (Mobile)</h2>
+<div id="menu">
+  <button onclick="startGame('easy')">😺 Dễ (4x4)</button>
+  <button onclick="startGame('medium')">🐯 Trung bình (5x6)</button>
+  <button onclick="startGame('hard')">😈 Khó (6x6)</button>
 </div>
 
+<h3 id="status"></h3>
+<div id="board"></div>
 
 <script>
-// ---------------- BIẾN CƠ BẢN ----------------
-let turns = 3;
-let coins = 0;
-let level = 1;
-let casting = false;
-let direction = 1;
-let power = 0;
-let interval;
+// Bộ icon emoji (dùng chung)
+const icons=["🐱","🐶","🐹","🐻","🐼","🐸","🐵","🦊","🐰","🐷","🐯","🐮","🐨","🐔","🐢","🐙","🐟","🦁","🐺","🦄"];
 
-// Cá theo độ hiếm
-const fishTypes = [
-  {name:"Common", price:5, baseSuccess:50},
-  {name:"Rare", price:15, baseSuccess:35},
-  {name:"Epic", price:40, baseSuccess:20},
-  {name:"Legendary", price:100, baseSuccess:10}
-];
+// Cài đặt kích thước theo chế độ
+const modes={
+  easy:{rows:4,cols:4},
+  medium:{rows:5,cols:6},
+  hard:{rows:6,cols:6}
+};
 
-function updateUI(){
-  document.getElementById("turns").textContent = turns;
-  document.getElementById("coins").textContent = coins;
-  document.getElementById("level").textContent = level;
+let grid=[],opened=[],lock=false,matchedCount=0;
+
+function startGame(mode){
+  const {rows,cols}=modes[mode];
+  const size=rows*cols;
+
+  // tạo mảng icon đôi
+  let pool=icons.slice(0,size/2);
+  grid=[...pool,...pool].sort(()=>Math.random()-0.5);
+
+  // tạo bảng
+  const board=document.getElementById("board");
+  board.style.gridTemplateColumns=`repeat(${cols}, 1fr)`;
+  board.innerHTML="";
+  matchedCount=0;
+  opened=[];
+  lock=false;
+  document.getElementById("status").innerText="🔎 Tìm các cặp giống nhau!";
+
+  grid.forEach((icon,i)=>{
+    let card=document.createElement("div");
+    card.className="card";
+    card.dataset.icon=icon;
+    card.dataset.i=i;
+    card.onclick=()=>flip(card);
+    board.appendChild(card);
+  });
 }
 
-// ---------------- CÂU CÁ ----------------
-function startCast(){
-  if(turns <= 0) return showText("❌ Hết lượt! Chơi lại sau!");
+function flip(card){
+  if(lock || card.classList.contains("open") || card.classList.contains("matched")) return;
+  card.classList.add("open");
+  card.innerHTML=card.dataset.icon;
+  opened.push(card);
 
-  document.getElementById("powerContainer").style.display = "block";
-  document.getElementById("btnCast").style.display = "none";
-
-  casting = true;
-  power = 0;
-
-  interval = setInterval(()=>{
-    let speed = 3 + level;
-    power += direction * speed;
-    if(power >= 300 || power <= 0) direction *= -1;
-    document.getElementById("powerBar").style.width = power+"px";
-  },30);
+  if(opened.length===2) checkMatch();
 }
 
-document.body.onclick = stopCast;
-document.body.onkeydown = (e)=>{ if(e.code==="Space") stopCast(); };
+function checkMatch(){
+  lock=true;
+  let [c1,c2]=opened;
 
-function stopCast(){
-  if(!casting) return;
-  casting = false;
-  clearInterval(interval);
-  document.getElementById("powerContainer").style.display = "none";
-
-  turns--;
-  updateUI();
-
-  let gaugeBonus = Math.floor(power/10);
-
-  // Random cá
-  let r = Math.random()*100;
-  let fish;
-  if(r < 60) fish = fishTypes[0];
-  else if(r < 85) fish = fishTypes[1];
-  else if(r < 95) fish = fishTypes[2];
-  else fish = fishTypes[3];
-
-  // Tính tỉ lệ
-  let successRate = fish.baseSuccess - (level*4) + gaugeBonus + rodBonus;
-  if(successRate < 5) successRate = 5;
-  if(successRate > 95) successRate = 95;
-
-  let caught = Math.random()*100 < successRate;
-  if(caught){
-    coins += fish.price;
-    showText(`🎉 Bắt được ${fish.name} +${fish.price} 💰 (tỉ lệ ${successRate}%)`);
-  }else{
-    showText(`💨 Sổng mất! (${fish.name}) (tỉ lệ ${successRate}%)`);
-  }
-
-  document.getElementById("btnCast").style.display = "block";
-
-  if(turns <= 0 && level < 10){
-    document.getElementById("nextLevel").style.display = "block";
-    showText("📍 Hết lượt! Sang hồ mới để tiếp tục.");
+  if(c1.dataset.icon===c2.dataset.icon){
+    c1.classList.add("matched");
+    c2.classList.add("matched");
+    matchedCount+=2;
+    document.getElementById("status").innerText="✔ Đúng rồi!";
+    resetTurn();
+    checkWin();
+  } else {
+    document.getElementById("status").innerText="❌ Sai rồi!";
+    setTimeout(()=>{
+      c1.classList.remove("open");c1.innerHTML="";
+      c2.classList.remove("open");c2.innerHTML="";
+      resetTurn();
+    },700);
   }
 }
 
-// ---------------- NÂNG CẤP SHOP ----------------
-let rodLevel = 1;
-let rodBonus = 0;
-let upgradeCost = 50;
-
-function openShop(){
-  document.getElementById("shop").style.display = "block";
-  renderShop();
-}
-function closeShop(){
-  document.getElementById("shop").style.display = "none";
-}
-function renderShop(){
-  document.getElementById("rodLevel").textContent = rodLevel;
-  document.getElementById("rodBonus").textContent = rodBonus;
-  document.getElementById("upgradeCost").textContent = upgradeCost;
-}
-function upgradeRod(){
-  if(coins < upgradeCost) return showText("❌ Không đủ tiền!");
-  coins -= upgradeCost;
-  rodLevel++;
-  rodBonus += 5;
-  upgradeCost = Math.floor(upgradeCost * 2);
-
-  updateUI();
-  renderShop();
-  showText(`⚙️ Nâng cấp xong! Cần câu cấp ${rodLevel} (+${rodBonus}%)`);
+function resetTurn(){
+  opened=[];
+  lock=false;
 }
 
-// ---------------- LEVEL MAP ----------------
-function nextLevel(){
-  if(level >= 10) return showText("🏆 Bạn đã qua 10 hồ. Hết map!");
-  level++;
-  turns = 3;
-  document.getElementById("nextLevel").style.display = "none";
-  showText(`➡️ Sang hồ cấp ${level}!`);
-  updateUI();
+function checkWin(){
+  if(matchedCount===grid.length){
+    document.getElementById("status").innerText="🎉 Thắng rồi! Chơi tiếp chọn chế độ!";
+  }
 }
-
-// ---------------- HIỂN THỊ ----------------
-function showText(msg){
-  document.getElementById("result").textContent = msg;
-}
-
-updateUI();
 </script>
 </body>
 </html>
