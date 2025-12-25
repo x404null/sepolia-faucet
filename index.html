@@ -1,271 +1,224 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Pixel Minesweeper</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<title>Fishing Hard Days 🎣</title>
 <style>
-  body {
-    margin: 0;
-    background: #7b7b7b;
-    font-family: "Courier New", monospace;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
+body{
+  font-family: monospace;
+  background:#1b1b1b;
+  color:#fff;
+  text-align:center;
+}
+#game{
+  background:#222;
+  padding:20px;
+  width:350px;
+  margin:auto;
+  border:3px solid #555;
+  border-radius:8px;
+}
+button{
+  padding:10px;
+  margin:5px;
+  background:#444;
+  color:white;
+  border:2px solid #666;
+  cursor:pointer;
+}
+button:hover{background:#666;}
 
-  .game {
-    background: #c0c0c0;
-    padding: 10px;
-    border: 4px solid #fff;
-    box-shadow:
-      inset -4px -4px #808080,
-      inset 4px 4px #fff;
-  }
+#powerContainer{
+  width:300px;
+  height:20px;
+  background:#555;
+  border:2px solid #999;
+  margin:20px auto;
+  display:none;
+}
+#powerBar{
+  width:10px;
+  height:100%;
+  background:#0f0;
+}
 
-  h1 {
-    text-align: center;
-    font-size: 16px;
-    margin: 4px 0 6px;
-  }
-
-  .top {
-    display: flex;
-    justify-content: space-between;
-    background: #bdbdbd;
-    padding: 4px;
-    border: 2px solid #808080;
-    margin-bottom: 6px;
-  }
-
-  select, button {
-    font-family: inherit;
-    font-size: 12px;
-    padding: 2px 6px;
-    background: #c0c0c0;
-    border: 2px solid #fff;
-    box-shadow:
-      inset -2px -2px #808080,
-      inset 2px 2px #fff;
-    cursor: pointer;
-  }
-
-  button:active {
-    box-shadow:
-      inset 2px 2px #808080,
-      inset -2px -2px #fff;
-  }
-
-  .grid {
-    display: grid;
-    gap: 0;
-    background: #808080;
-    padding: 2px;
-  }
-
-  .cell {
-    width: 26px;
-    height: 26px;
-    background: #c0c0c0;
-    border: 2px solid #fff;
-    box-shadow:
-      inset -2px -2px #808080,
-      inset 2px 2px #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    cursor: pointer;
-    user-select: none;
-  }
-
-  .cell.open {
-    background: #bdbdbd;
-    border: 1px solid #808080;
-    box-shadow: none;
-    cursor: default;
-  }
-
-  .cell.mine {
-    background: #ff4d4d;
-  }
-
-  .info {
-    text-align: center;
-    font-size: 12px;
-    margin-top: 6px;
-  }
+/* SHOP */
+#shop{
+  display:none;
+  background:#111;
+  padding:10px;
+  margin-top:15px;
+  border:2px solid #666;
+}
+#shop button{background:#777;border:1px solid #aaa;}
 </style>
 </head>
 
 <body>
 
-<div class="game">
-  <h1>💣 PIXEL MINESWEEPER</h1>
+<h1>🎣 Fishing Hard Days - Retro 9x</h1>
 
-  <div class="top">
-    <select id="level">
-      <option value="easy">Easy</option>
-      <option value="medium">Medium</option>
-      <option value="hard">Hard</option>
-    </select>
-    <button onclick="newGame()">New</button>
+<div id="game">
+  <div id="stats">
+    Hồ: <span id="level">1</span> / 10<br>
+    Lượt câu: <span id="turns">3</span><br>
+    Tiền: <span id="coins">0</span>
   </div>
 
-  <div class="grid" id="grid"></div>
-  <div class="info" id="info">Click to start</div>
+  <button id="btnCast" onclick="startCast()">🎣 Bắt đầu câu</button>
+  <button onclick="openShop()">🛒 Shop</button>
+
+  <div id="powerContainer">
+    <div id="powerBar"></div>
+  </div>
+
+  <p id="result"></p>
+  <button id="nextLevel" onclick="nextLevel()" style="display:none">📍 Sang hồ tiếp theo</button>
+
+  <!-- 🛍 SHOP -->
+  <div id="shop">
+    <h3>🛠️ SHOP NÂNG CẤP</h3>
+    <p>Cấp cần câu: <span id="rodLevel">1</span></p>
+    <p>Tăng tỉ lệ thành công: +<span id="rodBonus">0</span>%</p>
+    <p>Giá nâng cấp: <span id="upgradeCost">50</span>💰</p>
+    <button onclick="upgradeRod()">⚙️ Nâng cấp cần câu</button><br><br>
+    <button onclick="closeShop()">❌ Đóng</button>
+  </div>
+
 </div>
 
+
 <script>
-/* ===== SOUND (8-BIT STYLE) ===== */
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+// ---------------- BIẾN CƠ BẢN ----------------
+let turns = 3;
+let coins = 0;
+let level = 1;
+let casting = false;
+let direction = 1;
+let power = 0;
+let interval;
 
-function beep(freq, time) {
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-  osc.frequency.value = freq;
-  osc.type = "square";
-  gain encourage
-  gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-  osc.start();
-  osc.stop(audioCtx.currentTime + time);
+// Cá theo độ hiếm
+const fishTypes = [
+  {name:"Common", price:5, baseSuccess:50},
+  {name:"Rare", price:15, baseSuccess:35},
+  {name:"Epic", price:40, baseSuccess:20},
+  {name:"Legendary", price:100, baseSuccess:10}
+];
+
+function updateUI(){
+  document.getElementById("turns").textContent = turns;
+  document.getElementById("coins").textContent = coins;
+  document.getElementById("level").textContent = level;
 }
 
-const sound = {
-  click: () => beep(600, 0.05),
-  open: () => beep(800, 0.08),
-  boom: () => beep(120, 0.3),
-  win: () => beep(1000, 0.2)
-};
+// ---------------- CÂU CÁ ----------------
+function startCast(){
+  if(turns <= 0) return showText("❌ Hết lượt! Chơi lại sau!");
 
-/* ===== GAME LOGIC ===== */
-const gridEl = document.getElementById("grid");
-const infoEl = document.getElementById("info");
+  document.getElementById("powerContainer").style.display = "block";
+  document.getElementById("btnCast").style.display = "none";
 
-const levels = {
-  easy: { size: 8, mines: 10 },
-  medium: { size: 10, mines: 20 },
-  hard: { size: 12, mines: 35 }
-};
+  casting = true;
+  power = 0;
 
-let size, mineCount, board, revealed, gameOver;
-
-function newGame() {
-  const lvl = levels[document.getElementById("level").value];
-  size = lvl.size;
-  mineCount = lvl.mines;
-  revealed = 0;
-  gameOver = false;
-  infoEl.innerText = "Good luck 😈";
-
-  gridEl.style.gridTemplateColumns = `repeat(${size}, 26px)`;
-  board = Array.from({ length: size * size }, () => ({
-    mine: false,
-    open: false,
-    count: 0
-  }));
-
-  placeMines();
-  countMines();
-  render();
+  interval = setInterval(()=>{
+    let speed = 3 + level;
+    power += direction * speed;
+    if(power >= 300 || power <= 0) direction *= -1;
+    document.getElementById("powerBar").style.width = power+"px";
+  },30);
 }
 
-function placeMines() {
-  let placed = 0;
-  while (placed < mineCount) {
-    const i = Math.floor(Math.random() * board.length);
-    if (!board[i].mine) {
-      board[i].mine = true;
-      placed++;
-    }
+document.body.onclick = stopCast;
+document.body.onkeydown = (e)=>{ if(e.code==="Space") stopCast(); };
+
+function stopCast(){
+  if(!casting) return;
+  casting = false;
+  clearInterval(interval);
+  document.getElementById("powerContainer").style.display = "none";
+
+  turns--;
+  updateUI();
+
+  let gaugeBonus = Math.floor(power/10);
+
+  // Random cá
+  let r = Math.random()*100;
+  let fish;
+  if(r < 60) fish = fishTypes[0];
+  else if(r < 85) fish = fishTypes[1];
+  else if(r < 95) fish = fishTypes[2];
+  else fish = fishTypes[3];
+
+  // Tính tỉ lệ
+  let successRate = fish.baseSuccess - (level*4) + gaugeBonus + rodBonus;
+  if(successRate < 5) successRate = 5;
+  if(successRate > 95) successRate = 95;
+
+  let caught = Math.random()*100 < successRate;
+  if(caught){
+    coins += fish.price;
+    showText(`🎉 Bắt được ${fish.name} +${fish.price} 💰 (tỉ lệ ${successRate}%)`);
+  }else{
+    showText(`💨 Sổng mất! (${fish.name}) (tỉ lệ ${successRate}%)`);
+  }
+
+  document.getElementById("btnCast").style.display = "block";
+
+  if(turns <= 0 && level < 10){
+    document.getElementById("nextLevel").style.display = "block";
+    showText("📍 Hết lượt! Sang hồ mới để tiếp tục.");
   }
 }
 
-function countMines() {
-  for (let i = 0; i < board.length; i++) {
-    if (board[i].mine) continue;
-    board[i].count = neighbors(i).filter(n => board[n].mine).length;
-  }
+// ---------------- NÂNG CẤP SHOP ----------------
+let rodLevel = 1;
+let rodBonus = 0;
+let upgradeCost = 50;
+
+function openShop(){
+  document.getElementById("shop").style.display = "block";
+  renderShop();
+}
+function closeShop(){
+  document.getElementById("shop").style.display = "none";
+}
+function renderShop(){
+  document.getElementById("rodLevel").textContent = rodLevel;
+  document.getElementById("rodBonus").textContent = rodBonus;
+  document.getElementById("upgradeCost").textContent = upgradeCost;
+}
+function upgradeRod(){
+  if(coins < upgradeCost) return showText("❌ Không đủ tiền!");
+  coins -= upgradeCost;
+  rodLevel++;
+  rodBonus += 5;
+  upgradeCost = Math.floor(upgradeCost * 2);
+
+  updateUI();
+  renderShop();
+  showText(`⚙️ Nâng cấp xong! Cần câu cấp ${rodLevel} (+${rodBonus}%)`);
 }
 
-function neighbors(i) {
-  const x = i % size;
-  const y = Math.floor(i / size);
-  const list = [];
-  for (let dy = -1; dy <= 1; dy++) {
-    for (let dx = -1; dx <= 1; dx++) {
-      if (dx === 0 && dy === 0) continue;
-      const nx = x + dx, ny = y + dy;
-      if (nx >= 0 && nx < size && ny >= 0 && ny < size) {
-        list.push(ny * size + nx);
-      }
-    }
-  }
-  return list;
+// ---------------- LEVEL MAP ----------------
+function nextLevel(){
+  if(level >= 10) return showText("🏆 Bạn đã qua 10 hồ. Hết map!");
+  level++;
+  turns = 3;
+  document.getElementById("nextLevel").style.display = "none";
+  showText(`➡️ Sang hồ cấp ${level}!`);
+  updateUI();
 }
 
-function render() {
-  gridEl.innerHTML = "";
-  board.forEach((cell, i) => {
-    const d = document.createElement("div");
-    d.className = "cell";
-    if (cell.open) {
-      d.classList.add("open");
-      if (cell.mine) {
-        d.classList.add("mine");
-        d.innerText = "💣";
-      } else if (cell.count > 0) {
-        d.innerText = cell.count;
-      }
-    }
-    d.onclick = () => clickCell(i);
-    gridEl.appendChild(d);
-  });
+// ---------------- HIỂN THỊ ----------------
+function showText(msg){
+  document.getElementById("result").textContent = msg;
 }
 
-function clickCell(i) {
-  if (gameOver || board[i].open) return;
-  sound.click();
-
-  board[i].open = true;
-
-  if (board[i].mine) {
-    sound.boom();
-    revealAll();
-    infoEl.innerText = "💥 BOOM!";
-    gameOver = true;
-    render();
-    return;
-  }
-
-  revealed++;
-  sound.open();
-
-  if (board[i].count === 0) {
-    neighbors(i).forEach(n => {
-      if (!board[n].open) clickCell(n);
-    });
-  }
-
-  if (revealed === size * size - mineCount) {
-    sound.win();
-    infoEl.innerText = "🎉 YOU WIN!";
-    gameOver = true;
-  }
-
-  render();
-}
-
-function revealAll() {
-  board.forEach(c => c.open = true);
-}
-
-newGame();
+updateUI();
 </script>
-
 </body>
 </html>
