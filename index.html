@@ -6,167 +6,164 @@
 <title>GameHub</title>
 
 <style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-  font-family:Tahoma, Arial, sans-serif;
-  font-size:13px;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Tahoma, Arial, sans-serif;
+  font-size: 13px;
 }
 
 /* ===== PAGE ===== */
-body{
-  background:#008080;
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:flex-start;
-  padding:30px 0;
+body {
+  background: #008080;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 30px 0;
 }
 
 /* ===== WINDOW ===== */
-.window{
-  width:360px;
-  height:560px;               /* cao thêm */
-  background:#c0c0c0;
-  border:2px solid;
-  border-color:#fff #404040 #404040 #fff;
-  display:flex;
-  flex-direction:column;
+.window {
+  width: 360px;
+  height: 560px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ===== TITLE BAR ===== */
-.title-bar{
-  background:#000080;
-  color:#fff;
-  padding:6px 8px;
-  font-weight:bold;
-  flex-shrink:0;
+.title-bar {
+  background: #000080;
+  color: #fff;
+  padding: 6px 8px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.lang-switch img {
+  width: 18px;
+  height: 12px;
+  border: 1px solid #000;
+  cursor: pointer;
+  margin-left: 6px;
 }
 
 /* ===== CLIENT ===== */
-.client{
-  padding:12px;
-  flex:1;
-  display:flex;
-  flex-direction:column;
+.client {
+  padding: 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ===== MAIN ===== */
-.main{
-  display:flex;
-  gap:10px;
-  height:320px;
-  overflow:hidden;
+.main {
+  display: flex;
+  gap: 10px;
+  height: 320px;
+  overflow: hidden;
 }
 
 /* ===== GAME LIST ===== */
-.game-list{
-  width:45%;
-  background:#fff;
-  border:2px solid;
-  border-color:#404040 #fff #fff #404040;
-  overflow-y:auto;
+.game-list {
+  width: 45%;
+  background: #fff;
+  border: 2px solid;
+  border-color: #404040 #fff #fff #404040;
+  overflow-y: auto;
 }
-.game-item{
-  padding:6px 8px;
-  cursor:pointer;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+.game-item {
+  padding: 6px 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.game-item.active{
-  background:#000080;
-  color:#fff;
+.game-item.active {
+  background: #000080;
+  color: #fff;
 }
 
 /* ===== INFO ===== */
-.game-info{ width:55% }
-.game-info h3{ margin-bottom:6px }
-.game-info p{
-  font-size:12px;
-  margin-bottom:10px;
+.game-info {
+  width: 55%;
 }
+.game-info h3 { margin-bottom: 6px; }
+.game-info p { font-size: 12px; margin-bottom: 10px; }
 
 /* ===== BUTTON ===== */
-.btn{
-  padding:5px 14px;
-  background:#c0c0c0;
-  border:2px solid;
-  border-color:#fff #404040 #404040 #fff;
-  cursor:pointer;
+.btn {
+  padding: 5px 14px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  cursor: pointer;
 }
-.btn:active{
-  border-color:#404040 #fff #fff #404040;
-}
+.btn:active { border-color: #404040 #fff #fff #404040; }
 
-/* ===== STATUS BAR (ĐƯA LÊN TRÊN QC) ===== */
-.status{
-  margin-top:10px;
-  padding:6px 8px;
-  border-top:1px solid #808080;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+/* ===== STATUS ===== */
+.status {
+  margin-top: 10px;
+  padding: 6px 8px;
+  border-top: 1px solid #808080;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* ===== ICON BAR ===== */
-.icon-bar{
-  display:flex;
-  gap:10px;
+.icon-bar {
+  display: flex;
+  gap: 10px;
 }
-.icon-btn{
-  width:22px;
-  height:22px;
-  background:#c0c0c0;
-  border:1px solid #808080;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  font-size:16px;
+.icon-btn {
+  width: 22px;
+  height: 22px;
+  background: #c0c0c0;
+  border: 1px solid #808080;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
 }
-.icon-btn:active{
-  border-color:#404040 #fff #fff #404040;
-}
-
-/* ===== ADS AREA (DƯỚI CÙNG) ===== */
-.ads{
-  margin-top:10px;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
+.icon-btn:active {
+  border-color: #404040 #fff #fff #404040;
 }
 
-/* 2 quảng cáo nhỏ */
-.ads-row{
-  display:flex;
-  gap:8px;
+/* ===== ADS ===== */
+.ads {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
-.ad-small{
-  flex:1;
-  height:40px;
-  background:#fff;
-  border:2px solid;
-  border-color:#404040 #fff #fff #404040;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:11px;
-  color:#666;
+.ads-row {
+  display: flex;
+  gap: 8px;
 }
-
-/* 1 quảng cáo lớn */
-.ad-large{
-  height:60px;
-  background:#fff;
-  border:2px solid;
-  border-color:#404040 #fff #fff #404040;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:12px;
-  color:#666;
+.ad-small, .ad-large {
+  background: #fff;
+  border: 2px solid;
+  border-color: #404040 #fff #fff #404040;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+}
+.ad-small {
+  flex: 1;
+  height: 40px;
+  font-size: 11px;
+}
+.ad-large {
+  height: 60px;
+  font-size: 12px;
 }
 </style>
 </head>
@@ -175,7 +172,13 @@ body{
 
 <div class="window">
 
-  <div class="title-bar">GameHub</div>
+  <div class="title-bar">
+    <span id="titleText">GameHub</span>
+    <div class="lang-switch">
+      <img src="https://flagcdn.com/w20/vn.png" alt="VN" onclick="setLang('vi')">
+      <img src="https://flagcdn.com/w20/gb.png" alt="EN" onclick="setLang('en')">
+    </div>
+  </div>
 
   <div class="client">
 
@@ -186,11 +189,11 @@ body{
       <div class="game-info">
         <h3 id="gameTitle"></h3>
         <p id="gameDesc"></p>
-        <button class="btn">▶ Play</button>
+        <button class="btn" id="playBtn">▶ Chơi</button>
       </div>
     </div>
 
-    <!-- STATUS (TRÊN QUẢNG CÁO) -->
+    <!-- STATUS -->
     <div class="status">
       <span id="statusText">Đã chọn: Game 1</span>
       <div class="icon-bar">
@@ -200,48 +203,90 @@ body{
       </div>
     </div>
 
-    <!-- ADS (DƯỚI CÙNG) -->
+    <!-- ADS -->
     <div class="ads">
       <div class="ads-row">
-        <div class="ad-small">Quảng cáo nhỏ</div>
-        <div class="ad-small">Quảng cáo nhỏ</div>
+        <div class="ad-small" id="adSmall1">Quảng cáo nhỏ</div>
+        <div class="ad-small" id="adSmall2">Quảng cáo nhỏ</div>
       </div>
-      <div class="ad-large">Quảng cáo lớn</div>
+      <div class="ad-large" id="adLarge">Quảng cáo lớn</div>
     </div>
 
   </div>
 </div>
 
 <script>
-const games=[]
-for(let i=1;i<=100;i++){
+/* === DATA === */
+const games = [];
+for (let i = 1; i <= 100; i++) {
   games.push({
-    name:"Game "+i,
-    desc:"Mô tả ngắn cho game số "+i+"."
-  })
+    name_vi: "Game " + i,
+    desc_vi: "Mô tả ngắn cho game số " + i + ".",
+    name_en: "Game " + i,
+    desc_en: "Short description for game " + i + "."
+  });
 }
 
-let selected=0
-function render(){
-  const list=document.getElementById("gameList")
-  list.innerHTML=""
-  games.forEach((g,i)=>{
-    const d=document.createElement("div")
-    d.className="game-item"+(i===selected?" active":"")
-    d.textContent=g.name
-    d.onclick=()=>{
-      selected=i
-      document.getElementById("gameTitle").textContent=g.name
-      document.getElementById("gameDesc").textContent=g.desc
-      document.getElementById("statusText").textContent="Đã chọn: "+g.name
-      render()
-    }
-    list.appendChild(d)
-  })
+/* === STATE === */
+let lang = localStorage.getItem("lang") || "vi";
+let selected = 0;
+
+/* === TEXT MAPPING === */
+const text = {
+  vi: {
+    play: "▶ Chơi",
+    selected: "Đã chọn: ",
+    adSmall: "Quảng cáo nhỏ",
+    adLarge: "Quảng cáo lớn",
+    title: "GameHub"
+  },
+  en: {
+    play: "▶ Play",
+    selected: "Selected: ",
+    adSmall: "Small Ad",
+    adLarge: "Large Ad",
+    title: "GameHub"
+  }
+};
+
+/* === RENDER === */
+function render() {
+  const list = document.getElementById("gameList");
+  list.innerHTML = "";
+  games.forEach((g, i) => {
+    const d = document.createElement("div");
+    d.className = "game-item" + (i === selected ? " active" : "");
+    d.textContent = lang === "vi" ? g.name_vi : g.name_en;
+    d.onclick = () => selectGame(i);
+    list.appendChild(d);
+  });
+
+  const g = games[selected];
+  document.getElementById("gameTitle").textContent = lang === "vi" ? g.name_vi : g.name_en;
+  document.getElementById("gameDesc").textContent = lang === "vi" ? g.desc_vi : g.desc_en;
+  document.getElementById("statusText").textContent = text[lang].selected + (lang === "vi" ? g.name_vi : g.name_en);
+  document.getElementById("playBtn").textContent = text[lang].play;
+  document.getElementById("adSmall1").textContent = text[lang].adSmall;
+  document.getElementById("adSmall2").textContent = text[lang].adSmall;
+  document.getElementById("adLarge").textContent = text[lang].adLarge;
+  document.getElementById("titleText").textContent = text[lang].title;
 }
-render()
-document.getElementById("gameTitle").textContent=games[0].name
-document.getElementById("gameDesc").textContent=games[0].desc
+
+/* === SELECT === */
+function selectGame(i) {
+  selected = i;
+  render();
+}
+
+/* === LANG SWITCH === */
+function setLang(l) {
+  lang = l;
+  localStorage.setItem("lang", l);
+  render();
+}
+
+/* === INIT === */
+render();
 </script>
 
 </body>
