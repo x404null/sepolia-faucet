@@ -26,7 +26,7 @@ body{
 
 /* ===== WINDOW ===== */
 .window{
-  width:540px;
+  width:560px;
   background:#c0c0c0;
   border-top:2px solid #fff;
   border-left:2px solid #fff;
@@ -57,28 +57,32 @@ body{
   border:1px solid #000;
 }
 
-/* ===== CONTENT WRAP (TẠO KHOẢNG THỞ) ===== */
+/* ===== CONTENT WRAP ===== */
 .content-wrap{
-  padding:8px 10px;
+  padding:10px 12px;   /* khoảng thở tổng */
 }
 
 /* ===== CONTENT ===== */
 .content{
   display:flex;
   height:250px;
-  gap:10px; /* khoảng trống giữa 2 cột */
+  gap:14px;           /* khoảng cách giữa 2 khung */
 }
 
-/* ===== GAME LIST (RỘNG HƠN) ===== */
+/* ===== GAME LIST (TRÁI) ===== */
 .game-list{
-  width:45%;
+  width:46%;
   background:#fff;
+
+  /* inset margin kiểu Win98 */
+  padding:6px;
+
   border-top:2px solid #404040;
   border-left:2px solid #404040;
   border-right:2px solid #808080;
   border-bottom:2px solid #fff;
-  padding:4px;
 }
+
 .game-item{
   padding:5px 6px;
   cursor:pointer;
@@ -88,12 +92,20 @@ body{
   color:#fff;
 }
 
-/* ===== GAME INFO ===== */
+/* ===== GAME INFO (PHẢI) ===== */
 .game-info{
-  width:55%;
-  padding:8px 10px;
+  width:54%;
   background:#c0c0c0;
+
+  /* inset margin */
+  padding:10px;
+
+  border-top:2px solid #404040;
+  border-left:2px solid #404040;
+  border-right:2px solid #808080;
+  border-bottom:2px solid #fff;
 }
+
 .game-info h3{
   margin-bottom:6px;
 }
@@ -121,7 +133,7 @@ body{
 
 /* ===== BANNER ADS ===== */
 .banner{
-  margin:8px 10px;
+  margin:6px 12px 0;
   height:50px;
   background:#fff;
   display:flex;
@@ -129,6 +141,7 @@ body{
   justify-content:center;
   font-size:12px;
   color:#555;
+
   border-top:2px solid #404040;
   border-left:2px solid #404040;
   border-right:2px solid #fff;
@@ -138,7 +151,7 @@ body{
 /* ===== STATUS BAR ===== */
 .status-bar{
   background:#c0c0c0;
-  padding:3px 10px;
+  padding:3px 12px;
   border-top:1px solid #808080;
   font-size:12px;
   display:flex;
@@ -160,14 +173,14 @@ body{
     </div>
   </div>
 
-  <!-- CONTENT WRAP -->
+  <!-- CONTENT -->
   <div class="content-wrap">
     <div class="content">
 
-      <!-- LIST -->
+      <!-- LEFT -->
       <div class="game-list" id="gameList"></div>
 
-      <!-- INFO -->
+      <!-- RIGHT -->
       <div class="game-info">
         <h3 id="gameTitle"></h3>
         <p id="gameDesc"></p>
