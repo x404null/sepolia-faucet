@@ -6,7 +6,6 @@
 <title>Game Hub</title>
 
 <style>
-/* ===== RESET ===== */
 *{
   box-sizing:border-box;
   margin:0;
@@ -17,7 +16,7 @@
 
 /* ===== PAGE ===== */
 body{
-  background:#008080;          /* NỀN XANH WIN98 */
+  background:#008080;
   min-height:100vh;
   display:flex;
   justify-content:center;
@@ -37,6 +36,10 @@ body{
   background:#c0c0c0;
   border:2px solid;
   border-color:#fff #404040 #404040 #fff;
+
+  max-height:85vh;              /* 👈 ỔN ĐỊNH */
+  display:flex;
+  flex-direction:column;
 }
 
 /* ===== TITLE BAR ===== */
@@ -57,16 +60,19 @@ body{
   margin-left:6px;
 }
 
-/* ===== CLIENT AREA ===== */
+/* ===== CLIENT ===== */
 .client{
   padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
 }
 
 /* ===== MAIN ===== */
 .main{
   display:flex;
   gap:20px;
-  min-height:460px;     /* cao để thấy list dài */
+  min-height:300px;
 }
 
 /* ===== GAME LIST ===== */
@@ -75,7 +81,17 @@ body{
   background:#fff;
   border:2px solid;
   border-color:#404040 #fff #fff #404040;
-  overflow-y:auto;
+
+  max-height:360px;            /* 👈 LIST CÓ GIỚI HẠN */
+  overflow-y:auto;             /* 👈 CHỈ LIST SCROLL */
+}
+
+/* scrollbar */
+.game-list::-webkit-scrollbar{ width:14px }
+.game-list::-webkit-scrollbar-track{ background:#c0c0c0 }
+.game-list::-webkit-scrollbar-thumb{
+  background:#808080;
+  border:2px solid #c0c0c0;
 }
 
 .game-item{
@@ -93,9 +109,7 @@ body{
   width:45%;
 }
 
-.game-info h3{
-  margin-bottom:8px;
-}
+.game-info h3{ margin-bottom:8px }
 .game-info p{
   font-size:12px;
   margin-bottom:14px;
@@ -115,7 +129,6 @@ body{
 
 /* ===== BANNER ===== */
 .banner{
-  margin-top:20px;
   height:56px;
   background:#fff;
   border:2px solid;
@@ -129,7 +142,6 @@ body{
 
 /* ===== STATUS ===== */
 .status{
-  margin-top:12px;
   padding:6px 10px;
   border-top:1px solid #808080;
   display:flex;
@@ -142,19 +154,16 @@ body{
 <body>
 
 <div class="hub-wrapper">
-
   <div class="window">
 
-    <!-- TITLE -->
     <div class="title-bar">
       <span>GameHub</span>
       <div class="lang-switch">
-        <img src="https://flagcdn.com/w20/vn.png" onclick="setLang('vi')" title="Tiếng Việt">
-        <img src="https://flagcdn.com/w20/gb.png" onclick="setLang('en')" title="English">
+        <img src="https://flagcdn.com/w20/vn.png" onclick="setLang('vi')">
+        <img src="https://flagcdn.com/w20/gb.png" onclick="setLang('en')">
       </div>
     </div>
 
-    <!-- CLIENT -->
     <div class="client">
 
       <div class="main">
@@ -167,9 +176,7 @@ body{
         </div>
       </div>
 
-      <div class="banner">
-        Banner quảng cáo
-      </div>
+      <div class="banner">Banner quảng cáo</div>
 
       <div class="status">
         <span id="statusText">Ready</span>
@@ -179,23 +186,16 @@ body{
     </div>
 
   </div>
-
 </div>
 
 <script>
-/* ===== DATA: 100 GAMES ===== */
+/* ===== 100 GAMES ===== */
 const games=[]
 for(let i=1;i<=100;i++){
   games.push({
     id:i,
-    vi:{
-      name:"Game " + i,
-      desc:"Mô tả ngắn cho game số " + i + "."
-    },
-    en:{
-      name:"Game " + i,
-      desc:"Short description for game " + i + "."
-    },
+    vi:{ name:"Game "+i, desc:"Mô tả ngắn cho game số "+i+"." },
+    en:{ name:"Game "+i, desc:"Short description for game "+i+"." },
     link:"#"
   })
 }
@@ -204,38 +204,32 @@ let lang = localStorage.getItem("lang") || "vi"
 let selected = games[0]
 
 function renderList(){
-  const list = document.getElementById("gameList")
-  list.innerHTML = ""
+  const list=document.getElementById("gameList")
+  list.innerHTML=""
   games.forEach(g=>{
-    const d = document.createElement("div")
-    d.className = "game-item" + (g.id===selected.id?" active":"")
-    d.textContent = g[lang].name
-    d.onclick = ()=>selectGame(g)
+    const d=document.createElement("div")
+    d.className="game-item"+(g.id===selected.id?" active":"")
+    d.textContent=g[lang].name
+    d.onclick=()=>selectGame(g)
     list.appendChild(d)
   })
 }
 
 function selectGame(g){
-  selected = g
-  document.getElementById("gameTitle").textContent = g[lang].name
-  document.getElementById("gameDesc").textContent = g[lang].desc
-  document.getElementById("statusText").textContent =
-    (lang==="vi"?"Đã chọn: ":"Selected: ") + g[lang].name
+  selected=g
+  document.getElementById("gameTitle").textContent=g[lang].name
+  document.getElementById("gameDesc").textContent=g[lang].desc
+  document.getElementById("statusText").textContent=
+    (lang==="vi"?"Đã chọn: ":"Selected: ")+g[lang].name
   renderList()
 }
 
 function setLang(l){
-  lang = l
-  localStorage.setItem("lang", l)
+  lang=l
+  localStorage.setItem("lang",l)
   selectGame(selected)
 }
 
-document.getElementById("playBtn").onclick = ()=>{
-  document.getElementById("statusText").textContent =
-    lang==="vi"?"Đang mở game...":"Launching game..."
-}
-
-/* INIT */
 selectGame(selected)
 renderList()
 </script>
