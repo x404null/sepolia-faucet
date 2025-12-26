@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -27,9 +28,12 @@ body{
 /* ===== WINDOW ===== */
 .window{
   width:360px;
+  height:520px;                 /* 👈 CAO HƠN */
   background:#c0c0c0;
   border:2px solid;
   border-color:#fff #404040 #404040 #fff;
+  display:flex;
+  flex-direction:column;
 }
 
 /* ===== TITLE BAR ===== */
@@ -38,16 +42,22 @@ body{
   color:#fff;
   padding:6px 8px;
   font-weight:bold;
+  flex-shrink:0;
 }
 
 /* ===== CLIENT ===== */
-.client{ padding:12px }
+.client{
+  padding:12px;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
 
 /* ===== MAIN ===== */
 .main{
   display:flex;
   gap:10px;
-  height:260px;
+  height:320px;                 /* 👈 LIST + INFO CAO HƠN */
   overflow:hidden;
 }
 
@@ -59,6 +69,15 @@ body{
   border-color:#404040 #fff #fff #404040;
   overflow-y:auto;
 }
+
+/* scrollbar cổ */
+.game-list::-webkit-scrollbar{ width:14px }
+.game-list::-webkit-scrollbar-track{ background:#c0c0c0 }
+.game-list::-webkit-scrollbar-thumb{
+  background:#808080;
+  border:2px solid #c0c0c0;
+}
+
 .game-item{
   padding:6px 8px;
   cursor:pointer;
@@ -72,8 +91,12 @@ body{
 }
 
 /* ===== INFO ===== */
-.game-info{ width:55% }
-.game-info h3{ margin-bottom:6px }
+.game-info{
+  width:55%;
+}
+.game-info h3{
+  margin-bottom:6px;
+}
 .game-info p{
   font-size:12px;
   margin-bottom:10px;
@@ -102,6 +125,7 @@ body{
   align-items:center;
   justify-content:center;
   color:#666;
+  flex-shrink:0;
 }
 
 /* ===== STATUS BAR ===== */
@@ -112,9 +136,10 @@ body{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  flex-shrink:0;
 }
 
-/* ===== ICON BAR (EMOJI) ===== */
+/* ===== ICON BAR ===== */
 .icon-bar{
   display:flex;
   gap:10px;
@@ -128,7 +153,7 @@ body{
   align-items:center;
   justify-content:center;
   cursor:pointer;
-  font-size:16px;   /* 👈 emoji rõ */
+  font-size:16px;
 }
 .icon-btn:active{
   border-color:#404040 #fff #fff #404040;
@@ -159,11 +184,10 @@ body{
     <div class="status">
       <span id="statusText">Đã chọn: Game 1</span>
 
-      <!-- ICONS -->
       <div class="icon-bar">
-        <button class="icon-btn" title="Website" onclick="openLink('https://example.com')">🪟</button>
-        <button class="icon-btn" title="Chat" onclick="openLink('https://discord.com')">💬</button>
-        <button class="icon-btn" title="Donate" onclick="alert('Donate coming soon')">💰</button>
+        <button class="icon-btn" title="Website">🪟</button>
+        <button class="icon-btn" title="Chat">💬</button>
+        <button class="icon-btn" title="Donate">💰</button>
       </div>
     </div>
 
@@ -200,10 +224,6 @@ function render(){
 render()
 document.getElementById("gameTitle").textContent=games[0].name
 document.getElementById("gameDesc").textContent=games[0].desc
-
-function openLink(url){
-  window.open(url,'_blank')
-}
 </script>
 
 </body>
