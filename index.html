@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GameHub.exe</title>
+<title>Game Hub</title>
 
 <style>
 /* ===== RESET ===== */
@@ -15,252 +15,227 @@
   font-size:13px;
 }
 
-/* ===== DESKTOP ===== */
+/* ===== PAGE ===== */
 body{
-  background:#008080;
-  height:100vh;
+  background:#008080;          /* NỀN XANH WIN98 */
+  min-height:100vh;
   display:flex;
   justify-content:center;
-  align-items:center;
+  align-items:flex-start;
+  padding:40px 0;
 }
 
-/* ===== WINDOW ===== */
+/* ===== HUB WRAPPER ===== */
+.hub-wrapper{
+  width:100%;
+  max-width:920px;
+  padding:20px;
+}
+
+/* ===== HUB WINDOW ===== */
 .window{
-  width:560px;
   background:#c0c0c0;
-  border-top:2px solid #fff;
-  border-left:2px solid #fff;
-  border-right:2px solid #404040;
-  border-bottom:2px solid #404040;
-  box-shadow:2px 2px #000;
+  border:2px solid;
+  border-color:#fff #404040 #404040 #fff;
 }
 
 /* ===== TITLE BAR ===== */
 .title-bar{
   background:#000080;
   color:#fff;
-  padding:4px 6px;
+  padding:6px 8px;
   font-weight:bold;
   display:flex;
   justify-content:space-between;
   align-items:center;
 }
-.title-right{
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-.flag{
+.lang-switch img{
   width:18px;
   height:12px;
-  cursor:pointer;
   border:1px solid #000;
+  cursor:pointer;
+  margin-left:6px;
 }
 
-/* ===== CONTENT WRAP ===== */
-.content-wrap{
-  padding:10px 12px;   /* khoảng thở tổng */
+/* ===== CLIENT AREA ===== */
+.client{
+  padding:20px;
 }
 
-/* ===== CONTENT ===== */
-.content{
+/* ===== MAIN ===== */
+.main{
   display:flex;
-  height:250px;
-  gap:14px;           /* khoảng cách giữa 2 khung */
+  gap:20px;
+  min-height:460px;     /* cao để thấy list dài */
 }
 
-/* ===== GAME LIST (TRÁI) ===== */
+/* ===== GAME LIST ===== */
 .game-list{
-  width:46%;
+  width:55%;
   background:#fff;
-
-  /* inset margin kiểu Win98 */
-  padding:6px;
-
-  border-top:2px solid #404040;
-  border-left:2px solid #404040;
-  border-right:2px solid #808080;
-  border-bottom:2px solid #fff;
+  border:2px solid;
+  border-color:#404040 #fff #fff #404040;
+  overflow-y:auto;
 }
 
 .game-item{
-  padding:5px 6px;
+  padding:8px 10px;
   cursor:pointer;
+  white-space:nowrap;
 }
 .game-item.active{
   background:#000080;
   color:#fff;
 }
 
-/* ===== GAME INFO (PHẢI) ===== */
+/* ===== GAME INFO ===== */
 .game-info{
-  width:54%;
-  background:#c0c0c0;
-
-  /* inset margin */
-  padding:10px;
-
-  border-top:2px solid #404040;
-  border-left:2px solid #404040;
-  border-right:2px solid #808080;
-  border-bottom:2px solid #fff;
+  width:45%;
 }
 
 .game-info h3{
-  margin-bottom:6px;
+  margin-bottom:8px;
 }
 .game-info p{
   font-size:12px;
-  margin-bottom:12px;
+  margin-bottom:14px;
 }
 
 /* ===== BUTTON ===== */
 .btn{
-  padding:4px 14px;
+  padding:6px 16px;
   background:#c0c0c0;
   cursor:pointer;
-  border-top:2px solid #fff;
-  border-left:2px solid #fff;
-  border-right:2px solid #404040;
-  border-bottom:2px solid #404040;
+  border:2px solid;
+  border-color:#fff #404040 #404040 #fff;
 }
 .btn:active{
-  border-top:2px solid #404040;
-  border-left:2px solid #404040;
-  border-right:2px solid #fff;
-  border-bottom:2px solid #fff;
+  border-color:#404040 #fff #fff #404040;
 }
 
-/* ===== BANNER ADS ===== */
+/* ===== BANNER ===== */
 .banner{
-  margin:6px 12px 0;
-  height:50px;
+  margin-top:20px;
+  height:56px;
   background:#fff;
+  border:2px solid;
+  border-color:#404040 #fff #fff #404040;
   display:flex;
   align-items:center;
   justify-content:center;
   font-size:12px;
-  color:#555;
-
-  border-top:2px solid #404040;
-  border-left:2px solid #404040;
-  border-right:2px solid #fff;
-  border-bottom:2px solid #fff;
+  color:#666;
 }
 
-/* ===== STATUS BAR ===== */
-.status-bar{
-  background:#c0c0c0;
-  padding:3px 12px;
+/* ===== STATUS ===== */
+.status{
+  margin-top:12px;
+  padding:6px 10px;
   border-top:1px solid #808080;
-  font-size:12px;
   display:flex;
   justify-content:space-between;
+  font-size:12px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="window">
+<div class="hub-wrapper">
 
-  <!-- TITLE -->
-  <div class="title-bar">
-    <span>GameHub.exe</span>
-    <div class="title-right">
-      <img src="https://flagcdn.com/w20/vn.png" class="flag" onclick="setLang('vi')" title="Tiếng Việt">
-      <img src="https://flagcdn.com/w20/gb.png" class="flag" onclick="setLang('en')" title="English">
+  <div class="window">
+
+    <!-- TITLE -->
+    <div class="title-bar">
+      <span>GameHub</span>
+      <div class="lang-switch">
+        <img src="https://flagcdn.com/w20/vn.png" onclick="setLang('vi')" title="Tiếng Việt">
+        <img src="https://flagcdn.com/w20/gb.png" onclick="setLang('en')" title="English">
+      </div>
     </div>
-  </div>
 
-  <!-- CONTENT -->
-  <div class="content-wrap">
-    <div class="content">
+    <!-- CLIENT -->
+    <div class="client">
 
-      <!-- LEFT -->
-      <div class="game-list" id="gameList"></div>
+      <div class="main">
+        <div class="game-list" id="gameList"></div>
 
-      <!-- RIGHT -->
-      <div class="game-info">
-        <h3 id="gameTitle"></h3>
-        <p id="gameDesc"></p>
-        <button class="btn" id="playBtn">▶ Play</button>
+        <div class="game-info">
+          <h3 id="gameTitle"></h3>
+          <p id="gameDesc"></p>
+          <button class="btn" id="playBtn">▶ Play</button>
+        </div>
+      </div>
+
+      <div class="banner">
+        Banner quảng cáo
+      </div>
+
+      <div class="status">
+        <span id="statusText">Ready</span>
+        <span>Windows 98 style</span>
       </div>
 
     </div>
-  </div>
 
-  <!-- BANNER -->
-  <div class="banner">
-    Banner quảng cáo
-  </div>
-
-  <!-- STATUS -->
-  <div class="status-bar">
-    <span id="statusText">Ready</span>
-    <span>Win98 UI</span>
   </div>
 
 </div>
 
 <script>
-const games=[
-  {
-    id:1,
-    vi:{name:"Phản Xạ 5 Giây",desc:"Kiểm tra phản xạ của bạn trong mili giây."},
-    en:{name:"5 Second Reaction",desc:"Test your reaction speed in milliseconds."},
-    link:"reaction.html"
-  },
-  {
-    id:2,
-    vi:{name:"Đoán Số",desc:"Đoán con số bí mật nhanh nhất."},
-    en:{name:"Guess Number",desc:"Guess the secret number quickly."},
+/* ===== DATA: 100 GAMES ===== */
+const games=[]
+for(let i=1;i<=100;i++){
+  games.push({
+    id:i,
+    vi:{
+      name:"Game " + i,
+      desc:"Mô tả ngắn cho game số " + i + "."
+    },
+    en:{
+      name:"Game " + i,
+      desc:"Short description for game " + i + "."
+    },
     link:"#"
-  },
-  {
-    id:3,
-    vi:{name:"Xếp Ô",desc:"Xếp hình đơn giản nhưng gây nghiện."},
-    en:{name:"Block Puzzle",desc:"Simple but addictive puzzle game."},
-    link:"#"
-  }
-]
+  })
+}
 
-let lang=localStorage.getItem("lang")||"vi"
-let selected=games[0]
+let lang = localStorage.getItem("lang") || "vi"
+let selected = games[0]
 
 function renderList(){
-  const list=document.getElementById("gameList")
-  list.innerHTML=""
+  const list = document.getElementById("gameList")
+  list.innerHTML = ""
   games.forEach(g=>{
-    const d=document.createElement("div")
-    d.className="game-item"+(g.id===selected.id?" active":"")
-    d.textContent=g[lang].name
-    d.onclick=()=>selectGame(g)
+    const d = document.createElement("div")
+    d.className = "game-item" + (g.id===selected.id?" active":"")
+    d.textContent = g[lang].name
+    d.onclick = ()=>selectGame(g)
     list.appendChild(d)
   })
 }
 
 function selectGame(g){
-  selected=g
-  document.getElementById("gameTitle").textContent=g[lang].name
-  document.getElementById("gameDesc").textContent=g[lang].desc
-  document.getElementById("statusText").textContent=
-    (lang==="vi"?"Đã chọn: ":"Selected: ")+g[lang].name
+  selected = g
+  document.getElementById("gameTitle").textContent = g[lang].name
+  document.getElementById("gameDesc").textContent = g[lang].desc
+  document.getElementById("statusText").textContent =
+    (lang==="vi"?"Đã chọn: ":"Selected: ") + g[lang].name
   renderList()
 }
 
 function setLang(l){
-  lang=l
-  localStorage.setItem("lang",l)
+  lang = l
+  localStorage.setItem("lang", l)
   selectGame(selected)
 }
 
-document.getElementById("playBtn").onclick=()=>{
-  document.getElementById("statusText").textContent=
+document.getElementById("playBtn").onclick = ()=>{
+  document.getElementById("statusText").textContent =
     lang==="vi"?"Đang mở game...":"Launching game..."
-  setTimeout(()=>window.location.href=selected.link,400)
 }
 
+/* INIT */
 selectGame(selected)
 renderList()
 </script>
