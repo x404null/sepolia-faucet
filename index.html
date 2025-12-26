@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Game Hub</title>
+<title>GameHub</title>
 
 <style>
 *{
@@ -21,25 +21,15 @@ body{
   display:flex;
   justify-content:center;
   align-items:flex-start;
-  padding:40px 0;
+  padding:30px 0;
 }
 
-/* ===== HUB WRAPPER ===== */
-.hub-wrapper{
-  width:100%;
-  max-width:920px;
-  padding:20px;
-}
-
-/* ===== HUB WINDOW ===== */
+/* ===== WINDOW ===== */
 .window{
+  width:360px;
   background:#c0c0c0;
   border:2px solid;
   border-color:#fff #404040 #404040 #fff;
-
-  max-height:85vh;              /* 👈 ỔN ĐỊNH */
-  display:flex;
-  flex-direction:column;
 }
 
 /* ===== TITLE BAR ===== */
@@ -48,80 +38,54 @@ body{
   color:#fff;
   padding:6px 8px;
   font-weight:bold;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.lang-switch img{
-  width:18px;
-  height:12px;
-  border:1px solid #000;
-  cursor:pointer;
-  margin-left:6px;
 }
 
 /* ===== CLIENT ===== */
-.client{
-  padding:20px;
-  display:flex;
-  flex-direction:column;
-  gap:16px;
-}
+.client{ padding:12px }
 
 /* ===== MAIN ===== */
 .main{
   display:flex;
-  gap:20px;
-  min-height:300px;
+  gap:10px;
+  height:260px;
+  overflow:hidden;
 }
 
 /* ===== GAME LIST ===== */
 .game-list{
-  width:55%;
+  width:45%;
   background:#fff;
   border:2px solid;
   border-color:#404040 #fff #fff #404040;
-
-  max-height:360px;            /* 👈 LIST CÓ GIỚI HẠN */
-  overflow-y:auto;             /* 👈 CHỈ LIST SCROLL */
+  overflow-y:auto;
 }
-
-/* scrollbar */
-.game-list::-webkit-scrollbar{ width:14px }
-.game-list::-webkit-scrollbar-track{ background:#c0c0c0 }
-.game-list::-webkit-scrollbar-thumb{
-  background:#808080;
-  border:2px solid #c0c0c0;
-}
-
 .game-item{
-  padding:8px 10px;
+  padding:6px 8px;
   cursor:pointer;
   white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 .game-item.active{
   background:#000080;
   color:#fff;
 }
 
-/* ===== GAME INFO ===== */
-.game-info{
-  width:45%;
-}
-
-.game-info h3{ margin-bottom:8px }
+/* ===== INFO ===== */
+.game-info{ width:55% }
+.game-info h3{ margin-bottom:6px }
 .game-info p{
   font-size:12px;
-  margin-bottom:14px;
+  margin-bottom:10px;
 }
 
 /* ===== BUTTON ===== */
 .btn{
-  padding:6px 16px;
+  padding:5px 14px;
   background:#c0c0c0;
-  cursor:pointer;
   border:2px solid;
   border-color:#fff #404040 #404040 #fff;
+  cursor:pointer;
 }
 .btn:active{
   border-color:#404040 #fff #fff #404040;
@@ -129,109 +93,117 @@ body{
 
 /* ===== BANNER ===== */
 .banner{
-  height:56px;
+  margin-top:12px;
+  height:48px;
   background:#fff;
   border:2px solid;
   border-color:#404040 #fff #fff #404040;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:12px;
   color:#666;
 }
 
-/* ===== STATUS ===== */
+/* ===== STATUS BAR ===== */
 .status{
-  padding:6px 10px;
+  margin-top:10px;
+  padding:6px 8px;
   border-top:1px solid #808080;
   display:flex;
   justify-content:space-between;
-  font-size:12px;
+  align-items:center;
+}
+
+/* ===== ICON BAR (EMOJI) ===== */
+.icon-bar{
+  display:flex;
+  gap:10px;
+}
+.icon-btn{
+  width:22px;
+  height:22px;
+  background:#c0c0c0;
+  border:1px solid #808080;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-size:16px;   /* 👈 emoji rõ */
+}
+.icon-btn:active{
+  border-color:#404040 #fff #fff #404040;
 }
 </style>
 </head>
 
 <body>
 
-<div class="hub-wrapper">
-  <div class="window">
+<div class="window">
 
-    <div class="title-bar">
-      <span>GameHub</span>
-      <div class="lang-switch">
-        <img src="https://flagcdn.com/w20/vn.png" onclick="setLang('vi')">
-        <img src="https://flagcdn.com/w20/gb.png" onclick="setLang('en')">
+  <div class="title-bar">GameHub</div>
+
+  <div class="client">
+
+    <div class="main">
+      <div class="game-list" id="gameList"></div>
+
+      <div class="game-info">
+        <h3 id="gameTitle"></h3>
+        <p id="gameDesc"></p>
+        <button class="btn">▶ Play</button>
       </div>
     </div>
 
-    <div class="client">
+    <div class="banner">Banner quảng cáo</div>
 
-      <div class="main">
-        <div class="game-list" id="gameList"></div>
+    <div class="status">
+      <span id="statusText">Đã chọn: Game 1</span>
 
-        <div class="game-info">
-          <h3 id="gameTitle"></h3>
-          <p id="gameDesc"></p>
-          <button class="btn" id="playBtn">▶ Play</button>
-        </div>
+      <!-- ICONS -->
+      <div class="icon-bar">
+        <button class="icon-btn" title="Website" onclick="openLink('https://example.com')">🪟</button>
+        <button class="icon-btn" title="Chat" onclick="openLink('https://discord.com')">💬</button>
+        <button class="icon-btn" title="Donate" onclick="alert('Donate coming soon')">💰</button>
       </div>
-
-      <div class="banner">Banner quảng cáo</div>
-
-      <div class="status">
-        <span id="statusText">Ready</span>
-        <span>Windows 98 style</span>
-      </div>
-
     </div>
 
   </div>
 </div>
 
 <script>
-/* ===== 100 GAMES ===== */
 const games=[]
 for(let i=1;i<=100;i++){
   games.push({
-    id:i,
-    vi:{ name:"Game "+i, desc:"Mô tả ngắn cho game số "+i+"." },
-    en:{ name:"Game "+i, desc:"Short description for game "+i+"." },
-    link:"#"
+    name:"Game "+i,
+    desc:"Mô tả ngắn cho game số "+i+"."
   })
 }
 
-let lang = localStorage.getItem("lang") || "vi"
-let selected = games[0]
-
-function renderList(){
+let selected=0
+function render(){
   const list=document.getElementById("gameList")
   list.innerHTML=""
-  games.forEach(g=>{
+  games.forEach((g,i)=>{
     const d=document.createElement("div")
-    d.className="game-item"+(g.id===selected.id?" active":"")
-    d.textContent=g[lang].name
-    d.onclick=()=>selectGame(g)
+    d.className="game-item"+(i===selected?" active":"")
+    d.textContent=g.name
+    d.onclick=()=>{
+      selected=i
+      document.getElementById("gameTitle").textContent=g.name
+      document.getElementById("gameDesc").textContent=g.desc
+      document.getElementById("statusText").textContent="Đã chọn: "+g.name
+      render()
+    }
     list.appendChild(d)
   })
 }
+render()
+document.getElementById("gameTitle").textContent=games[0].name
+document.getElementById("gameDesc").textContent=games[0].desc
 
-function selectGame(g){
-  selected=g
-  document.getElementById("gameTitle").textContent=g[lang].name
-  document.getElementById("gameDesc").textContent=g[lang].desc
-  document.getElementById("statusText").textContent=
-    (lang==="vi"?"Đã chọn: ":"Selected: ")+g[lang].name
-  renderList()
+function openLink(url){
+  window.open(url,'_blank')
 }
-
-function setLang(l){
-  lang=l
-  localStorage.setItem("lang",l)
-  selectGame(selected)
-}
-
-selectGame(selected)
-renderList()
 </script>
 
 </body>
