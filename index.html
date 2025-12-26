@@ -1,125 +1,249 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Pikachu Mobile - 3 Chế Độ</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GameHub.exe</title>
+
 <style>
-body{background:#111;font-family:Arial;text-align:center;color:white;margin:0;user-select:none;}
-h2{padding-top:20px;}
-#menu{margin-top:20px;}
-button{
-  padding:12px 20px;margin:10px;font-size:20px;border:none;border-radius:8px;
-  background:#ffb300;color:#000;width:80%;max-width:250px;
+/* ===== RESET ===== */
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Tahoma, Arial, sans-serif;
+  font-size:13px;
 }
-#board{
-  margin:20px auto;display:grid;gap:6px;justify-content:center;
+
+/* ===== DESKTOP ===== */
+body{
+  background:#008080;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+/* ===== WINDOW ===== */
+.window{
+  width:520px;
+  background:#c0c0c0;
+  border-top:2px solid #fff;
+  border-left:2px solid #fff;
+  border-right:2px solid #404040;
+  border-bottom:2px solid #404040;
+  box-shadow:2px 2px #000;
+}
+
+/* ===== TITLE BAR ===== */
+.title-bar{
+  background:#000080;
+  color:#fff;
+  padding:4px 6px;
+  font-weight:bold;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.title-right{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.flag{
+  width:18px;
+  height:12px;
+  cursor:pointer;
+  border:1px solid #000;
+}
+
+/* ===== CONTENT ===== */
+.content{
+  display:flex;
+  height:260px;
+}
+
+/* ===== GAME LIST ===== */
+.game-list{
+  width:38%;
+  background:#fff;
+  border-top:2px solid #404040;
+  border-left:2px solid #404040;
+  border-right:2px solid #808080;
+  border-bottom:2px solid #fff;
+  padding:4px;
+}
+.game-item{
+  padding:4px 6px;
+  cursor:pointer;
+}
+.game-item.active{
+  background:#000080;
+  color:#fff;
+}
+
+/* ===== GAME INFO ===== */
+.game-info{
+  width:62%;
   padding:10px;
+  background:#c0c0c0;
 }
-.card{
-  background:#333;width:60px;height:60px;display:flex;align-items:center;
-  justify-content:center;border-radius:8px;font-size:32px;cursor:pointer;
-  transition:0.25s;
+.game-info h3{
+  margin-bottom:6px;
 }
-.card.open{background:#fff;color:#000;}
-.card.matched{background:#0f0;color:#000;cursor:default;}
-@media(max-width:600px){
-  .card{width:50px;height:50px;font-size:26px;}
+.game-info p{
+  font-size:12px;
+  margin-bottom:12px;
+}
+
+/* ===== BUTTON ===== */
+.btn{
+  padding:4px 14px;
+  background:#c0c0c0;
+  cursor:pointer;
+  border-top:2px solid #fff;
+  border-left:2px solid #fff;
+  border-right:2px solid #404040;
+  border-bottom:2px solid #404040;
+}
+.btn:active{
+  border-top:2px solid #404040;
+  border-left:2px solid #404040;
+  border-right:2px solid #fff;
+  border-bottom:2px solid #fff;
+}
+
+/* ===== BANNER ADS ===== */
+.banner{
+  margin:6px;
+  height:50px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  color:#555;
+  border-top:2px solid #404040;
+  border-left:2px solid #404040;
+  border-right:2px solid #fff;
+  border-bottom:2px solid #fff;
+}
+
+/* ===== STATUS BAR ===== */
+.status-bar{
+  background:#c0c0c0;
+  padding:3px 6px;
+  border-top:1px solid #808080;
+  font-size:12px;
+  display:flex;
+  justify-content:space-between;
 }
 </style>
 </head>
+
 <body>
 
-<h2>🧩 Pikachu Lật Hình (Mobile)</h2>
-<div id="menu">
-  <button onclick="startGame('easy')">😺 Dễ (4x4)</button>
-  <button onclick="startGame('medium')">🐯 Trung bình (5x6)</button>
-  <button onclick="startGame('hard')">😈 Khó (6x6)</button>
+<div class="window">
+
+  <!-- TITLE -->
+  <div class="title-bar">
+    <span>GameHub.exe</span>
+    <div class="title-right">
+      <img src="https://flagcdn.com/w20/vn.png" class="flag" onclick="setLang('vi')" title="Tiếng Việt">
+      <img src="https://flagcdn.com/w20/gb.png" class="flag" onclick="setLang('en')" title="English">
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- LIST -->
+    <div class="game-list" id="gameList"></div>
+
+    <!-- INFO -->
+    <div class="game-info">
+      <h3 id="gameTitle"></h3>
+      <p id="gameDesc"></p>
+      <button class="btn" id="playBtn">▶ Play</button>
+    </div>
+
+  </div>
+
+  <!-- BANNER -->
+  <div class="banner">
+    Banner quảng cáo
+    <!-- GẮN ADS SCRIPT Ở ĐÂY -->
+  </div>
+
+  <!-- STATUS -->
+  <div class="status-bar">
+    <span id="statusText">Ready</span>
+    <span>Win98 UI</span>
+  </div>
+
 </div>
 
-<h3 id="status"></h3>
-<div id="board"></div>
-
 <script>
-// Bộ icon emoji (dùng chung)
-const icons=["🐱","🐶","🐹","🐻","🐼","🐸","🐵","🦊","🐰","🐷","🐯","🐮","🐨","🐔","🐢","🐙","🐟","🦁","🐺","🦄"];
-
-// Cài đặt kích thước theo chế độ
-const modes={
-  easy:{rows:4,cols:4},
-  medium:{rows:5,cols:6},
-  hard:{rows:6,cols:6}
-};
-
-let grid=[],opened=[],lock=false,matchedCount=0;
-
-function startGame(mode){
-  const {rows,cols}=modes[mode];
-  const size=rows*cols;
-
-  // tạo mảng icon đôi
-  let pool=icons.slice(0,size/2);
-  grid=[...pool,...pool].sort(()=>Math.random()-0.5);
-
-  // tạo bảng
-  const board=document.getElementById("board");
-  board.style.gridTemplateColumns=`repeat(${cols}, 1fr)`;
-  board.innerHTML="";
-  matchedCount=0;
-  opened=[];
-  lock=false;
-  document.getElementById("status").innerText="🔎 Tìm các cặp giống nhau!";
-
-  grid.forEach((icon,i)=>{
-    let card=document.createElement("div");
-    card.className="card";
-    card.dataset.icon=icon;
-    card.dataset.i=i;
-    card.onclick=()=>flip(card);
-    board.appendChild(card);
-  });
-}
-
-function flip(card){
-  if(lock || card.classList.contains("open") || card.classList.contains("matched")) return;
-  card.classList.add("open");
-  card.innerHTML=card.dataset.icon;
-  opened.push(card);
-
-  if(opened.length===2) checkMatch();
-}
-
-function checkMatch(){
-  lock=true;
-  let [c1,c2]=opened;
-
-  if(c1.dataset.icon===c2.dataset.icon){
-    c1.classList.add("matched");
-    c2.classList.add("matched");
-    matchedCount+=2;
-    document.getElementById("status").innerText="✔ Đúng rồi!";
-    resetTurn();
-    checkWin();
-  } else {
-    document.getElementById("status").innerText="❌ Sai rồi!";
-    setTimeout(()=>{
-      c1.classList.remove("open");c1.innerHTML="";
-      c2.classList.remove("open");c2.innerHTML="";
-      resetTurn();
-    },700);
+const games=[
+  {
+    id:1,
+    vi:{name:"Phản Xạ 5 Giây",desc:"Kiểm tra phản xạ của bạn trong mili giây."},
+    en:{name:"5 Second Reaction",desc:"Test your reaction speed in milliseconds."},
+    link:"reaction.html"
+  },
+  {
+    id:2,
+    vi:{name:"Đoán Số",desc:"Đoán con số bí mật nhanh nhất."},
+    en:{name:"Guess Number",desc:"Guess the secret number quickly."},
+    link:"#"
+  },
+  {
+    id:3,
+    vi:{name:"Xếp Ô",desc:"Xếp hình đơn giản nhưng gây nghiện."},
+    en:{name:"Block Puzzle",desc:"Simple but addictive puzzle game."},
+    link:"#"
   }
+]
+
+let lang=localStorage.getItem("lang")||"vi"
+let selected=games[0]
+
+function renderList(){
+  const list=document.getElementById("gameList")
+  list.innerHTML=""
+  games.forEach(g=>{
+    const d=document.createElement("div")
+    d.className="game-item"+(g.id===selected.id?" active":"")
+    d.textContent=g[lang].name
+    d.onclick=()=>selectGame(g)
+    list.appendChild(d)
+  })
 }
 
-function resetTurn(){
-  opened=[];
-  lock=false;
+function selectGame(g){
+  selected=g
+  document.getElementById("gameTitle").textContent=g[lang].name
+  document.getElementById("gameDesc").textContent=g[lang].desc
+  document.getElementById("statusText").textContent=
+    (lang==="vi"?"Đã chọn: ":"Selected: ")+g[lang].name
+  renderList()
 }
 
-function checkWin(){
-  if(matchedCount===grid.length){
-    document.getElementById("status").innerText="🎉 Thắng rồi! Chơi tiếp chọn chế độ!";
-  }
+function setLang(l){
+  lang=l
+  localStorage.setItem("lang",l)
+  selectGame(selected)
 }
+
+document.getElementById("playBtn").onclick=()=>{
+  document.getElementById("statusText").textContent=
+    lang==="vi"?"Đang mở game...":"Launching game..."
+  setTimeout(()=>window.location.href=selected.link,400)
+}
+
+selectGame(selected)
+renderList()
 </script>
+
 </body>
 </html>
