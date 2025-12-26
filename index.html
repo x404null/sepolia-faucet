@@ -26,7 +26,7 @@ body{
 
 /* ===== WINDOW ===== */
 .window{
-  width:520px;
+  width:540px;
   background:#c0c0c0;
   border-top:2px solid #fff;
   border-left:2px solid #fff;
@@ -57,15 +57,21 @@ body{
   border:1px solid #000;
 }
 
+/* ===== CONTENT WRAP (TẠO KHOẢNG THỞ) ===== */
+.content-wrap{
+  padding:8px 10px;
+}
+
 /* ===== CONTENT ===== */
 .content{
   display:flex;
-  height:260px;
+  height:250px;
+  gap:10px; /* khoảng trống giữa 2 cột */
 }
 
-/* ===== GAME LIST ===== */
+/* ===== GAME LIST (RỘNG HƠN) ===== */
 .game-list{
-  width:38%;
+  width:45%;
   background:#fff;
   border-top:2px solid #404040;
   border-left:2px solid #404040;
@@ -74,7 +80,7 @@ body{
   padding:4px;
 }
 .game-item{
-  padding:4px 6px;
+  padding:5px 6px;
   cursor:pointer;
 }
 .game-item.active{
@@ -84,8 +90,8 @@ body{
 
 /* ===== GAME INFO ===== */
 .game-info{
-  width:62%;
-  padding:10px;
+  width:55%;
+  padding:8px 10px;
   background:#c0c0c0;
 }
 .game-info h3{
@@ -115,7 +121,7 @@ body{
 
 /* ===== BANNER ADS ===== */
 .banner{
-  margin:6px;
+  margin:8px 10px;
   height:50px;
   background:#fff;
   display:flex;
@@ -132,7 +138,7 @@ body{
 /* ===== STATUS BAR ===== */
 .status-bar{
   background:#c0c0c0;
-  padding:3px 6px;
+  padding:3px 10px;
   border-top:1px solid #808080;
   font-size:12px;
   display:flex;
@@ -154,25 +160,26 @@ body{
     </div>
   </div>
 
-  <!-- CONTENT -->
-  <div class="content">
+  <!-- CONTENT WRAP -->
+  <div class="content-wrap">
+    <div class="content">
 
-    <!-- LIST -->
-    <div class="game-list" id="gameList"></div>
+      <!-- LIST -->
+      <div class="game-list" id="gameList"></div>
 
-    <!-- INFO -->
-    <div class="game-info">
-      <h3 id="gameTitle"></h3>
-      <p id="gameDesc"></p>
-      <button class="btn" id="playBtn">▶ Play</button>
+      <!-- INFO -->
+      <div class="game-info">
+        <h3 id="gameTitle"></h3>
+        <p id="gameDesc"></p>
+        <button class="btn" id="playBtn">▶ Play</button>
+      </div>
+
     </div>
-
   </div>
 
   <!-- BANNER -->
   <div class="banner">
     Banner quảng cáo
-    <!-- GẮN ADS SCRIPT Ở ĐÂY -->
   </div>
 
   <!-- STATUS -->
